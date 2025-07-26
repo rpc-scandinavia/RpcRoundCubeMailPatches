@@ -241,7 +241,10 @@
 // This plugin assumes that RCM adds and removes the "dark-mode" class on the "html" element, specifying whether dark
 // mode is enabled or not. But RCM does not set the "dark-mode" class on the "html" element when the mail editor is
 // created/initialised, RCM does however set the "dark-mode" class on the "html" element when the user toggles between
-// dark and light mode. This fixes that.
+// dark and light mode.
+//
+// Because the web page is reloaded when the user opens the mail editor to compose a new message, there is no need to
+// listen/observe anything, just check if TinyMCE is there, and set the class if needed in a TinyMCE 'init' event.
 //----------------------------------------------------------------------------------------------------------------------
 if ((this.tinyMCE != null) && ($('html').hasClass('dark-mode') == true)) {
 	this.tinyMCE.on('AddEditor', e => e.editor.on('init', () => e.editor.getDoc().documentElement.classList.add('dark-mode')));
