@@ -1,0 +1,6 @@
+/* Override inline backgrounds in the mail viewer, when viewing mails in dark mode. */
+html.dark-mode #messagebody,
+html.dark-mode .message-part [style*="background"],
+html.dark-mode .message-htmlpart [style*="background"] {
+    background: transparent !important;
+}

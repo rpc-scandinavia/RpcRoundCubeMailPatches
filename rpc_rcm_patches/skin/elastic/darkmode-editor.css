@@ -1,0 +1,22 @@
+/* Mail editor dark mode patches. */
+html.dark-mode .mce-content-body {
+    color: #c5d1d3;
+    background-color: #21292c;
+}
+
+html.dark-mode .mce-content-body blockquote {
+    border-left: #1010ff 2px solid;
+}
+
+html.dark-mode .rcmail-inline-message {
+    color: #e5e5e5;
+    background-color: rgba(55, 55, 55, .6);
+}
+
+html.dark-mode a {
+    color: #4dafff;
+}
+
+html.dark-mode a:hover {
+    color: #82c7ff;
+}

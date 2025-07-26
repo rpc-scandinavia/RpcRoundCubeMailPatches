@@ -1,0 +1,23 @@
+<?php
+
+// Whether to override inline background styles in the mail viewer.
+$config['strip_inline_backgrounds'] = false;
+
+// Whether to use the modified Inter font.
+$config['use_scandinavian_inter_font'] = true;
+
+// RoundCubeMail adds and removes the 'dark-mode' class on the HTML element, in the application itself, in the mail
+// viewer IFrame and in the mail editor IFrame (TinyMCE), according to whether dark is enabled.
+// But this is not automatically done when the editor is initialised, so the following JavaScript code need to be added
+// to "program/js/editor.min.js" just after the "conf" configuration is created:
+//
+//		/* rpc_rcm_patches */
+//		// This ensures the 'dark-mode' class is set on editor initialization, so the RCM dark mode toggle
+//		// works properly inside the TinyMCE editor.
+//		if ($('html').hasClass('dark-mode') == true) {
+//			tinymce.on('AddEditor', e => e.editor.on('init', () =>
+//				e.editor.getDoc().documentElement.classList.add('dark-mode')
+//			));
+//		}
+//
+$config['auto_patch_editor_min_js'] = false;
