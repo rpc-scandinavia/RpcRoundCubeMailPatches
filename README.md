@@ -1,10 +1,10 @@
 # RPC RoundCubeMail Patches
 This plugin for RoundCubeMail version 1.7, patches dark mode for the mail editor and the mail viewer.
 
-It also includes a customized version of the Inter font made by Rasmus Andersson from Scandinavia, released under SIL Open Font License version 1.1.
+It also includes a customized version of the Inter font made by Rasmus Andersson from Scandinavia, released under SIL Open Font License version 1.1.\
 https://github.com/rsms/inter/  and  https://rsms.me/inter/
 
-It extends the mail editor dark mode work done by Dhiego Cassiano Fogaça Barbosa, which is released under Apache License version 2.0.
+It extends the mail editor dark mode work done by Dhiego Cassiano Fogaça Barbosa, which is released under Apache License version 2.0.\
 https://github.com/modscleo4/roundcube-plugin-dark-html
 
 ## Prerequisites
@@ -42,7 +42,7 @@ if ($('html').hasClass('dark-mode') == true) {
 The message editor **css** is fixed by creating a new **css** file containing the existing **css** from `skins/elastic/styles/embed.min.css` and some additional **css**. The RCM configuration setting `editor_css_location` is set with the path to the new combined **css** file, which causes RCM to use that file when it initialises the mail editor (TinyMCE).
 
 ### Known bugs
-Minor: The unminified version of `program/js/editor.js` is used.
+Minor: The unminified version of `program/js/editor.js` is used.\
 Minor: Not all the used **css** is minified.
 
 ## File permissions
