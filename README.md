@@ -38,5 +38,10 @@ Because files are written, the following file permissions are required:
 chmod  u+w  plugins/rpc_rcm_patches/skin/elastic
 ```
 
+## Examples
+<img src="images/dark-mode-example1.png" alt="Message editor in dark mode" width="80%" />
+<img src="images/dark-mode-example2.png" alt="Message viewer in dark mode" width="80%" />
+<img src="images/dark-mode-example3.png" alt="Message viewer in dark mode" width="80%" />
+
 René Paw Christensen\
 https://rpc-scandinavia.dk/
