@@ -29,7 +29,6 @@ RCM does however set the `dark-mode` class on the `html` element when the user t
 The message editor **css** is fixed by creating a new **css** file containing the existing **css** from `skins/elastic/styles/embed.min.css` and some additional **css**. The RCM configuration setting `editor_css_location` is set with the path to the new combined **css** file, which causes RCM to use that file when it initialises the mail editor (TinyMCE).
 
 ### Known bugs
-Minor: The unminified version of `program/js/editor.js` is used.\
 Minor: Not all the used **css** is minified.
 
 ## File permissions
