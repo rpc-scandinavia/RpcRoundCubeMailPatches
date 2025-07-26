@@ -87,7 +87,7 @@ class rpc_rcm_patches extends rcube_plugin {
 		// mail viewer IFrame and in the mail editor IFrame (TinyMCE), according to whether dark is enabled or not.
 		// But this is not automatically done when the editor is initialised, so the following JavaScript code need to
 		// be added to "program/js/editor.min.js" just after the "conf" configuration is created.
-		if ($rcmail->config->get('auto_patch_editor_min_js', true) == true) {
+		if ($rcmail->config->get('auto_patch_editor_min_js', false) == true) {
 			$editor_js_backup_path = RCUBE_INSTALL_PATH . 'program/js/editor.min.js.original';
 			$editor_js_source_path = RCUBE_INSTALL_PATH . 'program/js/editor.js';
 			$editor_js_path = RCUBE_INSTALL_PATH . 'program/js/editor.min.js';
