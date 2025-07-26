@@ -2,7 +2,7 @@
 This plugin for RoundCubeMail version 1.7, patches dark mode for the mail editor and the mail viewer.
 
 It also includes a customized version of the Inter font made by Rasmus Andersson from Scandinavia, released under SIL Open Font License version 1.1.
-https://github.com/rsms/inter/  and  https://rsms.me/inter/                                               │
+https://github.com/rsms/inter/  and  https://rsms.me/inter/
 
 It extends the mail editor dark mode work done by Dhiego Cassiano Fogaça Barbosa, which is released under Apache License version 2.0.
 https://github.com/modscleo4/roundcube-plugin-dark-html
