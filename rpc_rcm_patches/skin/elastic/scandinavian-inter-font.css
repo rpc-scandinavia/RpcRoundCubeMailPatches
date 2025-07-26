@@ -3,29 +3,29 @@
 	font-family: 'Roboto';
 	font-style: normal;
 	font-weight: 400;
-	src: url('../../fonts/InterWithVariableFeaturesAndRpc.woff2') format('woff2');
+	src: url('/static.php/plugins/rpc_rcm_patches/fonts/InterWithVariableFeaturesAndRpc.woff2') format('woff2');
 }
 @font-face {
 	font-family: 'Roboto';
 	font-style: italic;
 	font-weight: 400;
-	src: url('../../fonts/InterWithVariableFeaturesAndRpc.woff2') format('woff2');
+	src: url('/static.php/plugins/rpc_rcm_patches/fonts/InterWithVariableFeaturesAndRpc.woff2') format('woff2');
 }
 @font-face {
 	font-family: 'Roboto';
 	font-style: normal;
 	font-weight: 700;
-	src: url('../../fonts/InterWithVariableFeaturesAndRpc.woff2') format('woff2');
+	src: url('/static.php/plugins/rpc_rcm_patches/fonts/InterWithVariableFeaturesAndRpc.woff2') format('woff2');
 }
 @font-face {
 	font-family: 'Roboto';
 	font-style: italic;
 	font-weight: 700;
-	src: url('../../fonts/InterWithVariableFeaturesAndRpc.woff2') format('woff2');
+	src: url('/static.php/plugins/rpc_rcm_patches/fonts/InterWithVariableFeaturesAndRpc.woff2') format('woff2');
 }
 @font-face {
 	font-family: 'ScandinavianInter';
-	src: url('../../fonts/InterWithVariableFeaturesAndRpc.woff2') format('woff2');
+	src: url('/static.php/plugins/rpc_rcm_patches/fonts/InterWithVariableFeaturesAndRpc.woff2') format('woff2');
 	font-weight: normal;
 	font-style: normal;
 	font-display: swap;

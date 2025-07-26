@@ -61,7 +61,7 @@ class rpc_rcm_patches extends rcube_plugin {
 		//--------------------------------------------------------------------------------------------------------------
         // 1) Create merged mail editor CSS file if needed.
 		$embed_path = RCUBE_INSTALL_PATH . 'skins/elastic/styles/embed.min.css';
-        $dark_path   = __DIR__ . '/skin/elastic/darkmode-editor.css';
+        $dark_path = __DIR__ . '/skin/elastic/darkmode-editor.css';
         $merged_path = __DIR__ . '/skin/elastic/darkmode-editor-all.css';
 		if ((is_readable($embed_path) == true) &&
 			(is_readable($dark_path) == true) &&
@@ -85,9 +85,19 @@ class rpc_rcm_patches extends rcube_plugin {
 		//--------------------------------------------------------------------------------------------------------------
 		// Use the Scandinavian Inter font.
 		//--------------------------------------------------------------------------------------------------------------
-		if ($rcmail->config->get('use_scandinavian_inter_font', true) == true) {
+		$userFont = $rcmail->config->get('use_scandinavian_inter_font', "yes");
+		if (($userFont == "yes") || ($userFont == "viewer")) {
             $this->include_stylesheet('skin/elastic/scandinavian-inter-font.css');
-        }
+		}
+		if (($userFont == "yes") || ($userFont == "editor")) {
+			$availableFonts = $rcmail->config->get('available_fonts', null);
+			if ($availableFonts != null) {
+				$availableFonts['Inter'] = 'ScandinavianInter';
+				ksort($availableFonts);
+				$rcmail->config->set('available_fonts', $availableFonts);
+			}
+	        $rcmail->config->set('default_font', 'Inter');
+		}
 
     } // init
 

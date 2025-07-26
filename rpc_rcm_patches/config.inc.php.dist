@@ -4,4 +4,5 @@
 $config['strip_inline_backgrounds'] = false;
 
 // Whether to use the modified Inter font.
-$config['use_scandinavian_inter_font'] = true;
+// Accepted enable values are: "yes", "viewer", "editor".
+$config['use_scandinavian_inter_font'] = "yes";
