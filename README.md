@@ -44,5 +44,11 @@ chmod  u+w  plugins/rpc_rcm_patches/skin/elastic
 <img src="images/dark-mode-example5.png" alt="Message viewer in dark mode" width="80%" />
 <img src="images/dark-mode-example6.png" alt="Message viewer in dark mode" width="80%" />
 
+### The same message in RoundCubeMail and Thunderbird
+<img src="images/dark-mode-example7-in-rcm.png" alt="Message viewer in dark mode" width="80%" />
+<img src="images/dark-mode-example7-in-thunderbird.png" alt="Thunderbird in dark mode" width="80%" />
+
+
+
 René Paw Christensen\
 https://rpc-scandinavia.dk/
