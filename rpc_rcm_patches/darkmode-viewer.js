@@ -1,3 +1,6 @@
+//----------------------------------------------------------------------------------------------------------------------
+// Mail viewer.
+//----------------------------------------------------------------------------------------------------------------------
 (function() {
 	function valuesToRgba(r, g, b, a) {
 		return { r, g, b, a };
@@ -232,3 +235,14 @@
 		});
 	});
 })();
+
+//----------------------------------------------------------------------------------------------------------------------
+// Mail editor.
+// This plugin assumes that RCM adds and removes the "dark-mode" class on the "html" element, specifying whether dark
+// mode is enabled or not. But RCM does not set the "dark-mode" class on the "html" element when the mail editor is
+// created/initialised, RCM does however set the "dark-mode" class on the "html" element when the user toggles between
+// dark and light mode. This fixes that.
+//----------------------------------------------------------------------------------------------------------------------
+if ((this.tinyMCE != null) && ($('html').hasClass('dark-mode') == true)) {
+	this.tinyMCE.on('AddEditor', e => e.editor.on('init', () => e.editor.getDoc().documentElement.classList.add('dark-mode')));
+}

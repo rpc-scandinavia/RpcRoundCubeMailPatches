@@ -21,23 +21,9 @@ This plugin assumes that RCM adds and removes the `dark-mode` class on the `html
 Minor: Sometimes there is a white flash when a mail is selected. I haven't been able to find the **css** that causes this.
 
 ## Mail editor (TinyMCE)
-RCM does not set the `dark-mode` class on the `html` element when the mail editor is created/initialised, RCM does however set the `dark-mode` class on the `html` element when the user toggles between **dark** and **light** mode.
+RCM does not set the `dark-mode` class on the `html` element when the mail editor is created/initialised, the plugin fixes that.
 
-### Fix missing class
-This requires editing of the **java script** code. This can be done manually, or automatically by enabling the `auto_patch_editor_min_js` configuration option.
-
-* Backup the original `program/js/editor.min.js`
-* Copy the `program/js/editor.js` file to `program/js/editor.min.js`
-* Patch the (unminified) `program/js/editor.min.js` after the initialisation with this:
-
-```js
-/* rpc_rcm_patch */
-if ($('html').hasClass('dark-mode') == true) {
-	tinymce.on('AddEditor', e => e.editor.on('init', () =>
-		e.editor.getDoc().documentElement.classList.add('dark-mode')
-	));
-}
-```
+RCM does however set the `dark-mode` class on the `html` element when the user toggles between **dark** and **light** mode.
 
 ### Fix **css**
 The message editor **css** is fixed by creating a new **css** file containing the existing **css** from `skins/elastic/styles/embed.min.css` and some additional **css**. The RCM configuration setting `editor_css_location` is set with the path to the new combined **css** file, which causes RCM to use that file when it initialises the mail editor (TinyMCE).
