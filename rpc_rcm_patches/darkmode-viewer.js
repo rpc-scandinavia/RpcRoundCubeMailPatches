@@ -72,7 +72,13 @@
 		}
 
 		// Prefer style-defined colours.
+		styleMapBackColor = null;
+		if (styleMap['background']) {
+			styleMapBackColor = 'background';
+			originalBackColor = styleMap['background'];
+		}
 		if (styleMap['background-color']) {
+			styleMapBackColor = 'background-color';
 			originalBackColor = styleMap['background-color'];
 		}
 		if (styleMap['color']) {
@@ -111,8 +117,8 @@
 		}
 
 		// Update the style map.
-		if (styleMap['background-color']) {
-			styleMap['background-color'] = newBackgroundColor;
+		if (styleMapBackColor != null) {
+			styleMap[styleMapBackColor] = newBackgroundColor;
 		}
 		if (styleMap['color']) {
 			styleMap['color'] = newTextColor;
