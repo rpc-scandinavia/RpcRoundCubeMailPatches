@@ -1,5 +1,6 @@
 # RPC RoundCubeMail Patches
 This plugin for RoundCubeMail version 1.7, patches dark mode for the mail editor and the mail viewer.
+I think the quality is close to what you get in **Thunderbird**.
 
 It also includes a customized version of the Inter font made by Rasmus Andersson from Scandinavia, released under SIL Open Font License version 1.1.\
 https://github.com/rsms/inter/  and  https://rsms.me/inter/
