@@ -12,7 +12,7 @@ This plugin assumes that RCM adds and removes the `dark-mode` class on the `html
 
 * For the web program itself
 * For the mail viewer `iframe`
-* * For the mail viewer `window` or `tab`
+* For the mail viewer `window` or `tab`
 * For the mail editor `iframe` (TinyMCE)
 
 ## Mail viewer
