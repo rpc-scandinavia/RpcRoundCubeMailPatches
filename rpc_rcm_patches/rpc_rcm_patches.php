@@ -1,7 +1,7 @@
 <?php
 // ┌────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┐
 // │  SCRIPT: plugins/rpc_rcm_patches/rpc_rcm_patches.php                                                               │
-// │ VERSION: 2025-07-25 Initial version for RCM versopm 1.7.                                                           │
+// │ VERSION: 2025-07-25 Initial version for RCM version 1.7.                                                           │
 // │  SYSTEM: RoundCubeMail version 1.7.                                                                                │
 // │ LICENSE: GNU General Public License (GPL) version 3.                                                               │
 // │FUNCTION: This plugin for RoundCubeMail, patches dark mode for the mail editor and the mail viewer.                 │
