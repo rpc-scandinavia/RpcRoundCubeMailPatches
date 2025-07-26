@@ -8,7 +8,7 @@ It extends the mail editor dark mode work done by Dhiego Cassiano Fogaça Barbos
 https://github.com/modscleo4/roundcube-plugin-dark-html
 
 ## Prerequisites
-This plugin assumes that RCM adds and removes the `dark-mode` class on the `html` element, specifying whether **dark mode** is enabled and not:
+This plugin assumes that RCM adds and removes the `dark-mode` class on the `html` element, specifying whether **dark mode** is enabled or not:
 
 * For the web program itself
 * For the mail viewer `iframe`
@@ -20,7 +20,7 @@ This plugin assumes that RCM adds and removes the `dark-mode` class on the `html
 Minor: Sometimes there is a white flash when a mail is selected. I haven't been able to find the **css** that causes this.
 
 ## Mail editor (TinyMCE)
-RCM does not set the 'dark-mode' class on the `html` element when the mail editor is created/initialised, RCM does however set the 'dark-mode' class on the `html` element when the user toggles between **dark** and **light** mode.
+RCM does not set the `dark-mode` class on the `html` element when the mail editor is created/initialised, RCM does however set the `dark-mode` class on the `html` element when the user toggles between **dark** and **light** mode.
 
 ### Fix missing class
 This requires editing of the **java script** code. This can be done manually, or automatically by enabling the `auto_patch_editor_min_js` configuration option.
@@ -45,6 +45,14 @@ The message editor **css** is fixed by creating a new **css** file containing th
 Minor: The unminified version of `program/js/editor.js` is used.
 Minor: Not all the used **css** is minified.
 
+## File permissions
+Because files are written, the following file permissions are required:
+
+```sh
+chmod  u+w  plugins/rpc_rcm_patches/skin/elastic
+chmod  u+w  program/js
+chmod  u+w  program/js/editor.min.js
+```
 
 René Paw Christensen
 https://rpc-scandinavia.dk/
