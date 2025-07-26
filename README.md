@@ -37,8 +37,6 @@ Because files are written, the following file permissions are required:
 
 ```sh
 chmod  u+w  plugins/rpc_rcm_patches/skin/elastic
-chmod  u+w  program/js
-chmod  u+w  program/js/editor.min.js
 ```
 
 René Paw Christensen
