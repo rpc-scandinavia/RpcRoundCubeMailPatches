@@ -39,9 +39,9 @@ chmod  u+w  plugins/rpc_rcm_patches/skin/elastic
 ```
 
 ## Examples
-<img src="images/dark-mode-example1.png" alt="Message editor in dark mode" text-align="center" width="80%" />
-<img src="images/dark-mode-example5.png" alt="Message viewer in dark mode" text-align="center" width="80%" />
-<img src="images/dark-mode-example6.png" alt="Message viewer in dark mode" text-align="center" width="80%" />
+<img src="images/dark-mode-example1.png" alt="Message editor in dark mode" style="justify-content: center;" width="80%" />
+<img src="images/dark-mode-example5.png" alt="Message viewer in dark mode" style="justify-content: center;" width="80%" />
+<img src="images/dark-mode-example6.png" alt="Message viewer in dark mode" style="justify-content: center;" width="80%" />
 
 René Paw Christensen\
 https://rpc-scandinavia.dk/
