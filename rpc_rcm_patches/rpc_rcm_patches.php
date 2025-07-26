@@ -19,7 +19,19 @@
 // └────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┘
 
 class rpc_rcm_patches extends rcube_plugin {
+	private const PLUGIN_VERSION = '2025.0';
+	private const PLUGIN_INFO = [
+		'name' => 'rpc_rcm_patches',
+		'vendor' => 'RPC Scandinavia',
+		'version' => self::PLUGIN_VERSION,
+		'license' => 'GPL-3.0',
+		'uri' => 'https://github.com/rpc-scandinavia/RpcRoundCubeMailPatches/'
+    ];
     public $task = 'mail';
+
+	public static function info(): array {
+		return self::PLUGIN_INFO;
+	} // Info
 
     function init() {
 		$rcmail = rcmail::get_instance();
