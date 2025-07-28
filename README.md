@@ -17,6 +17,14 @@ This plugin assumes that RCM adds and removes the `dark-mode` class on the `html
 * For the mail editor `iframe` (TinyMCE)
 
 ## Mail viewer
+The configurable option `invert_implementation` lets you choose which **inverting** implementation to use.
+
+| Value   | Description                                              |
+|---------|----------------------------------------------------------|
+| classic | The initial implementation (see examples below).         |
+| colour  | An alternative implementation that retains more colours. |
+
+I am still playing with the `colour` implementation.
 
 ### Known bugs
 Minor: Sometimes there is a white flash when a mail is selected. I haven't been able to find the **css** that causes this.
