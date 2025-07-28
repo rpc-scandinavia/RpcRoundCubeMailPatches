@@ -27,7 +27,9 @@ The configurable option `invert_implementation` lets you choose which **invertin
 I am still playing with the `colour` implementation.
 
 ### Known bugs
-Minor: Sometimes there is a white flash when a mail is selected. I haven't been able to find the **css** that causes this.
+Minor: Sometimes there is a white flash when a mail is selected, but I think that I have found all the relevant **css** that can cause this.
+
+I am inclined not to view this as a but, because it looks like this is comming from white or bright background in the message itself, and the flash is caused by the delay between loading the message and the plugin inverting the message HTML elements. 
 
 ## Mail editor (TinyMCE)
 RCM does not set the `dark-mode` class on the `html` element when the mail editor is created/initialised, the plugin fixes that.
