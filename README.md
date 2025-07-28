@@ -13,7 +13,7 @@ The configurable option `use_scandinavian_inter_font` lets you choose whether to
 
 | Value  | Description                                                                  |
 |--------|------------------------------------------------------------------------------|
-| Yes    | Use the Scandinavian Inter font in both the mail viewer and the mail editor. |
+| yes    | Use the Scandinavian Inter font in both the mail viewer and the mail editor. |
 | viewer | Use the Scandinavian Inter font in the mail viewer.                          |
 | editor | Use the Scandinavian Inter font in the mail editor.                          |
 |        | Any other value will disable use of the Scandinavian Inter font.             |
