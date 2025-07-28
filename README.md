@@ -8,7 +8,21 @@ https://github.com/rsms/inter/  and  https://rsms.me/inter/
 It extends the mail editor dark mode work done by Dhiego Cassiano Fogaça Barbosa, which is released under Apache License version 2.0.\
 https://github.com/modscleo4/roundcube-plugin-dark-html
 
-## Prerequisites
+## Inter font
+The configurable option `use_scandinavian_inter_font` lets you choose whether to use the modified Inter font.
+
+| Value  | Description                                                                  |
+|--------|------------------------------------------------------------------------------|
+| Yes    | Use the Scandinavian Inter font in both the mail viewer and the mail editor. |
+| viewer | Use the Scandinavian Inter font in the mail viewer.                          |
+| editor | Use the Scandinavian Inter font in the mail editor.                          |
+|        | Any other value will disable use of the Scandinavian Inter font.             |
+
+When used in the mail editor, the Inter font is added to the `available_fonts` option and set as default in the `default_font` option.
+
+A note about custom fonts in the message editor. Even though the font is available in the message **css**, the `@font face` is most likely stripped by the receiving mail servers with the result that the message receiver will see an alternative font unless the message receiver has an `inter` font installed, in which case the message receiver should see the Inter font though not the Scandinavian version.
+
+## Dark mode prerequisites
 This plugin assumes that RCM adds and removes the `dark-mode` class on the `html` element, specifying whether **dark mode** is enabled or not:
 
 * For the web program itself
