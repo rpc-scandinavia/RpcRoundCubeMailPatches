@@ -1,6 +1,6 @@
 (function() {
 	//------------------------------------------------------------------------------------------------------------------
-	// Mail viewer.
+	// Mail viewer helper functions.
 	//------------------------------------------------------------------------------------------------------------------
 	// A transparent Rgba colour object.
 	const transparenRgba = { r: 0, g: 0, b: 0, a: 0 };
@@ -270,6 +270,9 @@
 		return (validStyles.length > 0) ? validStyles.join('; ') : '';
 	} // styleMapToString
 
+	//------------------------------------------------------------------------------------------------------------------
+	// Mail viewer invert and revers functions.
+	//------------------------------------------------------------------------------------------------------------------
 	// Invert the background colours for use with dark mode.
 	// The following rules apply:
 	// * Choose the visible background colour between 'originalBackColorRgba' and 'computedBackColorRgba'.
