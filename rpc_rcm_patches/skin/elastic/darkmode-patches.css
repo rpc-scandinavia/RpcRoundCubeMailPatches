@@ -1,11 +1,12 @@
 /* Prevent white flash in the mail viewer, when viewing mails in dark mode. */
 html.dark-mode #message-content,
 html.dark-mode #messagebody,
+html.dark-mode .rcmBody,
 html.dark-mode .message-objects,
 html.dark-mode .message-part,
 html.dark-mode .message-htmlpart {
     background: #21292c !important;
-    color: inherit !important;
+    color: #c5d1d3 !important;
 }
 
 /* Prevent white background in the windowed mail viewer, when viewing mails in dark mode. */

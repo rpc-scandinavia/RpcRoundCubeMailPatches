@@ -1,8 +1,12 @@
 <?php
 
+// Specify the invert implementation used.
+// Accepted values are: "classic" (default), "colour", "test".
+$config['invert_implementation'] = "";
+
 // Whether to override inline background styles in the mail viewer.
 $config['strip_inline_backgrounds'] = false;
 
 // Whether to use the modified Inter font.
-// Accepted enable values are: "yes", "viewer", "editor".
-$config['use_scandinavian_inter_font'] = "yes";
+// Accepted enable values are: "yes" (default), "viewer", "editor".
+$config['use_scandinavian_inter_font'] = "";

@@ -24,7 +24,7 @@
 	src: url('/static.php/plugins/rpc_rcm_patches/fonts/InterWithVariableFeaturesAndRpc.woff2') format('woff2');
 }
 @font-face {
-	font-family: 'ScandinavianInter';
+	font-family: 'Inter';
 	src: url('/static.php/plugins/rpc_rcm_patches/fonts/InterWithVariableFeaturesAndRpc.woff2') format('woff2');
 	font-weight: normal;
 	font-style: normal;
@@ -38,5 +38,5 @@ optgroup,
 select,
 textarea,
 .popover {
-	font-family: 'ScandinavianInter', serif;
+	font-family: 'Inter', serif;
 }

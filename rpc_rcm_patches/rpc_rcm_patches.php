@@ -50,7 +50,19 @@ class rpc_rcm_patches extends rcube_plugin {
 		//--------------------------------------------------------------------------------------------------------------
 		// Dark mode for the mail viewer.
 		//--------------------------------------------------------------------------------------------------------------
-        $this->include_script('darkmode-viewer.js');
+		switch ($rcmail->config->get('invert_implementation', '')) {
+			case 'test':
+        		$this->include_script('darkmode-viewer-test.js');
+        		break;
+			case 'color':
+			case 'colour':
+        		$this->include_script('darkmode-viewer-colour.js');
+        		break;
+			case 'classic':
+			default:
+        		$this->include_script('darkmode-viewer-classic.js');
+        		break;
+		}
 
 		//--------------------------------------------------------------------------------------------------------------
 		// Dark mode for the mail editor.
@@ -85,14 +97,14 @@ class rpc_rcm_patches extends rcube_plugin {
 		//--------------------------------------------------------------------------------------------------------------
 		// Use the Scandinavian Inter font.
 		//--------------------------------------------------------------------------------------------------------------
-		$userFont = $rcmail->config->get('use_scandinavian_inter_font', "yes");
-		if (($userFont == "yes") || ($userFont == "viewer")) {
+		$userFont = $rcmail->config->get('use_scandinavian_inter_font', 'yes');
+		if (($userFont == 'yes') || ($userFont == "viewer")) {
             $this->include_stylesheet('skin/elastic/scandinavian-inter-font.css');
 		}
-		if (($userFont == "yes") || ($userFont == "editor")) {
+		if (($userFont == 'yes') || ($userFont == 'editor')) {
 			$availableFonts = $rcmail->config->get('available_fonts', null);
 			if ($availableFonts != null) {
-				$availableFonts['Inter'] = 'ScandinavianInter';
+				$availableFonts['Inter'] = 'Inter';
 				ksort($availableFonts);
 				$rcmail->config->set('available_fonts', $availableFonts);
 			}

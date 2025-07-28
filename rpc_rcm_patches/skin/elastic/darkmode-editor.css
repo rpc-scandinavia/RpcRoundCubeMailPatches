@@ -23,16 +23,15 @@ html.dark-mode a:hover {
 
 /* Inter font in the message editor. */
 @font-face {
-  font-family: 'ScandinavianInter';
+  font-family: 'Inter';
   src: url('/static.php/plugins/rpc_rcm_patches/fonts/InterWithVariableFeaturesAndRpc.woff2') format('woff2');
   font-weight: normal;
   font-style: normal;
   font-display: swap;
 }
 
-/* Optional: make InterRpc the default font */
-/*
+/* Make Inter the default font */
+/* Found in 'program/resources/tinymce/content.css'. */
 body, td, pre {
-  font-family: 'InterRpc', "Lucida Grande", Verdana, Arial, Helvetica, sans-serif;
+  font-family: 'Inter', "Lucida Grande", Verdana, Arial, Helvetica, sans-serif;
 }
-*/
