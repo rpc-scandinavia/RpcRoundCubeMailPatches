@@ -78,6 +78,14 @@ chmod  u+w  plugins/rpc_rcm_patches/skin/elastic
 <img src="images/dark-mode-example7-in-rcm.png" alt="Message viewer in dark mode" width="80%" />
 <img src="images/dark-mode-example7-in-thunderbird.png" alt="Thunderbird in dark mode" width="80%" />
 
+## Installation
+Basic steps to install this plugin:
+
+* Download code from GitHub (https://github.com/rpc-scandinavia/RpcRoundCubeMailPatches)
+* Extract files, and copy directory `rpc_rcm_patches` to `plugins`
+* Enable plugin in `config/config.inc.php` by adding `rpc_rcm_patches` to `$config['plugins']` array
+* Copy configuration file `plugins/rpc_rcm_patches/config.inc.php.dist` to `plugins/rpc_rcm_patches/config.inc.php`
+* Allow plugin to create **css** file: `chmod  u+w  plugins/rpc_rcm_patches/skin/elastic`
 
 
 René Paw Christensen\
