@@ -4,9 +4,18 @@
 // Accepted values are: "classic" (default), "colour", "test".
 $config['invert_implementation'] = "";
 
+// Flag to enforce "invert_implementation", overriding user preferences.
+$config['invert_implementation_force'] = false;
+
 // Whether to override inline background styles in the mail viewer.
 $config['strip_inline_backgrounds'] = false;
+
+// Flag to enforce "strip_inline_backgrounds", overriding user preferences.
+$config['strip_inline_backgrounds_force'] = false;
 
 // Whether to use the modified Inter font.
 // Accepted enable values are: "yes" (default), "viewer", "editor".
 $config['use_scandinavian_inter_font'] = "";
+
+// Flag to enforce "use_scandinavian_inter_font", overriding user preferences.
+$config['use_scandinavian_inter_font_force'] = false;
