@@ -1,0 +1,28 @@
+{
+    "name": "rpc-scandinavia/rpc_rcm_patches",
+    "type": "roundcube-plugin",
+    "description": "Patches dark mode for the message viewer and the message editor. Includes a Scandinavian Inter font. Options can be configured by the user or forces by the systems administrator. Only tested on RoundCubeMail 1.7 Beta.",
+    "license": "GPL-3.0",
+    "version": "2025.0",
+    "authors": [
+        {
+            "name": "René Paw Christensen",
+            "email": "rpc@rpc-scandinavia.dk",
+            "role": "Lead"
+        }
+    ],
+    "repositories": [
+        {
+            "type": "git",
+            "url": "https://github.com/rpc-scandinavia/RpcRoundCubeMailPatches"
+        },
+        {
+            "type": "composer",
+            "url": "https://plugins.roundcube.net/"
+        }
+    ],
+    "require": {
+        "php": ">=8.2.0",
+        "roundcube": ">=1.7.0"
+    }
+}
