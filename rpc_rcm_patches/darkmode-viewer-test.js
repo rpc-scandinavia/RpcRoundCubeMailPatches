@@ -3,64 +3,43 @@ window.rpc_rcm_patches = window.rpc_rcm_patches || {};
 
 (function(ns) {
 	//------------------------------------------------------------------------------------------------------------------
-	// Mail viewer helper functions.
+	// Mail viewer.
 	//------------------------------------------------------------------------------------------------------------------
-	// A transparent Rgba colour object.
 	const transparenRgba = { r: 0, g: 0, b: 0, a: 0 };
 
-	// A opaque black Rgba/Hsla colour objects.
-	const blackRgba = { r: 0, g: 0, b: 0, a: 1 };
-	const blackHsla = { h: 0, s: 0, l: 0, a: 1 };
-
-	// Parses a colour strint to an Rgbs colour object.
-	// Supports #rrggbb, #rrggbbaa, rgb(r,g,b), rgba(r,g,b,a), hsl(h,s,l), hsla(h,s,l,a).
-	// String rawColorStr: The raw colour string to parse.
-	// String computedColorStr: Optional fallback, incase the 'rawColorStr' can't be parsed, for instance 'orange'.
-	// Rgba return: The parsed colour as an Rgbs colour object or null.
 	function parseColorToRgba(rawColorStr, computedColorStr = '') {
 		// Helper to normalize and validate RGBA values.
-		// Int32 r: The red value (0 - 255).
-		// Int32 g: The green value (0 - 255).
-		// Int32 b: The blue value (0 - 255).
-		// Decimal a: The alpha value  (0 - 1).
-		// Rgbs return: The normalised values as an Rgbs colour object.
 		function valuesToRgba(r, g, b, a = 1) {
 			return {
-				r: Math.max(0, Math.min(255, Math.round(r))),
-				g: Math.max(0, Math.min(255, Math.round(g))),
-				b: Math.max(0, Math.min(255, Math.round(b))),
-				a: Math.max(0, Math.min(1, Number(a.toFixed(3))))
+					r: Math.max(0, Math.min(255, Math.round(r))),
+					g: Math.max(0, Math.min(255, Math.round(g))),
+					b: Math.max(0, Math.min(255, Math.round(b))),
+					a: Math.max(0, Math.min(1, Number(a.toFixed(3))))
 			};
 		} // valuesToRgba
 
-		// Helper to parse hex colour string.
-		// Supports #rrggbb, #rrggbbaa.
-		// String hexColorStr: The raw colour string to parse.
-		// Rgba return: The parsed colour as an Rgbs colour object or null.
-		function parseHex(hexColorStr) {
-			hexColorStr = hexColorStr.replace(/^#/, '');
+		// Helper to parse hex colour.
+		function parseHex(hex) {
+			hex = hex.replace(/^#/, '');
 			let r, g, b, a = 1;
-			if (hexColorStr.length === 6) {
-				r = parseInt(hexColorStr.slice(0, 2), 16);
-				g = parseInt(hexColorStr.slice(2, 4), 16);
-				b = parseInt(hexColorStr.slice(4, 6), 16);
-			} else if (hexColorStr.length === 8) {
-				r = parseInt(hexColorStr.slice(0, 2), 16);
-				g = parseInt(hexColorStr.slice(2, 4), 16);
-				b = parseInt(hexColorStr.slice(4, 6), 16);
-				a = parseInt(hexColorStr.slice(6, 8), 16) / 255;
+			if (hex.length === 6) {
+				r = parseInt(hex.slice(0, 2), 16);
+				g = parseInt(hex.slice(2, 4), 16);
+				b = parseInt(hex.slice(4, 6), 16);
+			} else if (hex.length === 8) {
+				r = parseInt(hex.slice(0, 2), 16);
+				g = parseInt(hex.slice(2, 4), 16);
+				b = parseInt(hex.slice(4, 6), 16);
+				a = parseInt(hex.slice(6, 8), 16) / 255;
 			} else {
 				return null;
 			}
 			return { r, g, b, a };
 		} // parseHex
 
-		// Helper to parse rgb/rgba colour string.
-		// Supports rgb(r,g,b), rgba(r,g,b,a).
-		// String rgbColorStr: The raw colour string to parse.
-		// Rgba return: The parsed colour as an Rgba colour object or null.
-		function parseRgb(rgbColorStr) {
-			const match = rgbColorStr.match(/^rgb(a?)\((\d+),\s*(\d+),\s*(\d+)(?:,\s*([\d.]+))?\)$/i);
+		// Helper to parse rgb/rgba string.
+		function parseRgb(rgb) {
+			const match = rgb.match(/^rgb(a?)\((\d+),\s*(\d+),\s*(\d+)(?:,\s*([\d.]+))?\)$/i);
 			if (!match) {
 				return null;
 			}
@@ -68,12 +47,9 @@ window.rpc_rcm_patches = window.rpc_rcm_patches || {};
 			return valuesToRgba(Number(r), Number(g), Number(b), Number(a));
 		} // parseRgb
 
-		// Helper to parse hsl/hsla colour string.
-		// Supports hsl(h,s,l), hsla(h,s,l,a).
-		// String hslColorString: The raw colour string to parse.
-		// Rgba return: The parsed colour as an Rgbs colour object or null.
-		function parseHsl(hslColorString) {
-			const match = hslColorString.match(/^hsl(a?)\((\d+),\s*(\d+)%,\s*(\d+)%(?:,\s*([\d.]+))?\)$/i);
+		// Helper to parse hsl/hsla string.
+		function parseHsl(hsl) {
+			const match = hsl.match(/^hsl(a?)\((\d+),\s*(\d+)%,\s*(\d+)%(?:,\s*([\d.]+))?\)$/i);
 			if (!match) {
 				return null;
 			}
@@ -98,9 +74,9 @@ window.rpc_rcm_patches = window.rpc_rcm_patches || {};
 			result = parseHsl(rawColorStr);
 		}
 
-		// If parsing of the raw colour string succeeded, return the result but don't allow transparent result.
+		// If parsing of the raw colour string succeeded, return the result.
 		if ((result) && (isNaN(result.r) == false) && (isNaN(result.g) == false) && (isNaN(result.b) == false) && (isNaN(result.a) == false)) {
-        	return { ...result, a: (result.a === 0) ? 1 : result.a };
+        	return { ...result, a: result.a === 0 ? 1 : result.a };
     	}
 
 		// Try parsing computed colour string as fallback.
@@ -114,27 +90,21 @@ window.rpc_rcm_patches = window.rpc_rcm_patches || {};
 				result = parseHsl(computedColorStr);
 			}
 
-			// If parsing of the computed colour string succeeded, return the result but don't allow transparent result.
+			// If parsing of the computed colour string succeeded, return the result.
 			if ((result) && (isNaN(result.r) == false) && (isNaN(result.g) == false) && (isNaN(result.b) == false) && (isNaN(result.a) == false)) {
 				return { ...result, a: result.a === 0 ? 1 : result.a };
 			}
 		}
 
 		// Default if all parsing fails.
-		return blackRgba;
+		return valuesToRgba(0, 0, 0, 1);
 	} // parseColorToRgba
 
-	// Converts a Rgba object to an Hsla object.
-	// Int32 r: The red value (0 - 255).
-	// Int32 g: The green value (0 - 255).
-	// Int32 b: The blue value (0 - 255).
-	// Decimal a: The alpha value  (0 - 1).
-	// Hsla return: The converted colour as an Hsla object.
 	function rgbToHsl({ r, g, b, a = 1 }) {
 		// Validate inputs.
-		if ((Number.isFinite(r) == false) || (Number.isFinite(g) == false) || (Number.isFinite(b) == false) || (Number.isFinite(a) == false) ||
-			(r < 0) || (r > 255) || (g < 0) || (g > 255) || (b < 0) || (b > 255) || (a < 0) || (a > 1)) {
-			return blackHsla;
+		if ((Number.isFinite(r) == false) || (Number.isFinite(g) == false) || (Number.isFinite(b) == false) ||
+			(r < 0) || (r > 255) || (g < 0) || (g > 255) || (b < 0) || (b > 255) || (Number.isFinite(a) == false) || (a < 0) || (a > 1)) {
+			return { h: 0, s: 0, l: 0, a: 1 };
 		}
 
 		// Normalize RGB values.
@@ -177,19 +147,13 @@ window.rpc_rcm_patches = window.rpc_rcm_patches || {};
 		};
 	} // rgbToHsl
 
-	// Converts a Hsla object to an Rgba object.
-	// Int32 h: The hue value (0 - 360).
-	// Int32 s: The saturation value (0 - 100).
-	// Int32 l: The lumination value (0 - 100).
-	// Decimal a: The alpha value  (0 - 1).
-	// Hsla return: The converted colour as an Hsla object.
 	function hslToRgb({ h, s, l, a = 1 }) {
 		// Validate inputs.
 		if ((Number.isFinite(h) == false) || (h < 0) || (h > 360) ||
 			(Number.isFinite(s) == false) || (s < 0) || (s > 100) ||
 			(Number.isFinite(l) == false) || (l < 0) || (l > 100) ||
 			(Number.isFinite(a) == false) || (a < 0) || (a > 1)) {
-			return blackRgba;
+			return { r: 0, g: 0, b: 0, a: 1 }; // Default to opaque black
 		}
 
 		h /= 360;
@@ -234,20 +198,10 @@ window.rpc_rcm_patches = window.rpc_rcm_patches || {};
 		};
 	} // hslToRgb
 
-	// Format the Rgba object to a string like "rgba(r,g,b,a)"
-	// Int32 r: The red value (0 - 255).
-	// Int32 g: The green value (0 - 255).
-	// Int32 b: The blue value (0 - 255).
-	// Decimal a: The alpha value  (0 - 1).
-	// String return: The formatted colour.
 	function formatRgba({ r, g, b, a }) {
 		return `rgba(${Math.round(r)}, ${Math.round(g)}, ${Math.round(b)}, ${a})`;
 	} // formatRgba
 
-	// Parses a style attribute string into an object containing the parsed key/value pairs.
-	// The string contains key/value pairs like this: "background-color: white; color: black"
-	// String style: The style attribute string.
-	// Object return: The object containing the parsed key/value pairs.
 	function parseStyleString(style) {
 		const styleMap = {};
 		if (!style) {
@@ -263,9 +217,6 @@ window.rpc_rcm_patches = window.rpc_rcm_patches || {};
 		return styleMap;
 	} // parseStyleString
 
-	// Format the object containing the key/value pairs to a string like "background-color: white; color: black".
-	// Object styleMap: The object containing the key/value pairs (prevuously produces with 'parseStyleString').
-	// String return: The formatted object.
 	function styleMapToString(styleMap) {
 		const validStyles = Object.entries(styleMap)
 			.filter(([key, val]) => /^[a-z-]+$/i.test(key) && val != null)
@@ -273,9 +224,6 @@ window.rpc_rcm_patches = window.rpc_rcm_patches || {};
 		return (validStyles.length > 0) ? validStyles.join('; ') : '';
 	} // styleMapToString
 
-	//------------------------------------------------------------------------------------------------------------------
-	// Mail viewer invert and revers functions.
-	//------------------------------------------------------------------------------------------------------------------
 	// Invert the background colours for use with dark mode.
 	// The following rules apply:
 	// * Choose the visible background colour between 'originalBackColorRgba' and 'computedBackColorRgba'.
@@ -339,7 +287,7 @@ window.rpc_rcm_patches = window.rpc_rcm_patches || {};
 				fgHsla.s = fgHsla.s === 0 ? 0 : Math.min(100, fgHsla.s + 30);		// Vibrant text.
 			} else {
 				fgHsla.l = Math.max(20, fgHsla.l - 40);								// Dark text for mid-tone backgrounds.
-				fgHsla.s = fgHsla.s === 0 ? 0 : Math.min(100, fgHsla.s + 30);		// Vibrant text.
+				fgHsla.s = fgHsla.s === 0 ? 0 : Math.min(100, fgHsla.s + 30);							// Vibrant text.
 			}
 			const result = hslToRgb(fgHsla);
 			return { ...result, a: safeFgRgba.a };
@@ -459,10 +407,16 @@ window.rpc_rcm_patches = window.rpc_rcm_patches || {};
 				// Use the better supported 'background-color'.
 				element.removeAttribute('bgcolor');
 				styleMapBackColor = 'background-color';
+//				styleMap[styleMapBackColor] = formatRgba(invertedBackColorRgba) + ' !important';
+
+//				// Use unique class for higher specificity.
+//				element.classList.add('darkmode-inverted-table');
 			}
 			if (styleMapBackColor) {
+//				styleMap[styleMapBackColor] = formatRgba(invertedBackColorRgba) + ' !important';
 				styleMap[styleMapBackColor] = formatRgba(invertedBackColorRgba);
 			} else {
+//				element.style.backgroundColor = formatRgba(invertedBackColorRgba) + ' !important';
 				element.style.backgroundColor = formatRgba(invertedBackColorRgba);
 			}
 			if (styleMapTextColor) {
@@ -471,15 +425,46 @@ window.rpc_rcm_patches = window.rpc_rcm_patches || {};
 				element.style.color = formatRgba(invertedTextColorRgba);
 			}
 
+/*
+// Clear backgrounds for all table descendants
+if (elementIsTable == true) {
+	element.querySelectorAll('tr, td, table').forEach(child => {
+		child.style.backgroundColor = 'transparent !important';
+		// Debug descendant backgrounds
+		console.log('Descendant:', child.tagName, 'Computed Background:', getComputedStyle(child).backgroundColor);
+	});
+	// Debug computed style for table
+	console.log('Table:', element.getAttribute('bgcolor') || 'No bgcolor',
+				'Computed:', getComputedStyle(element).backgroundColor,
+				'HSL:', rgbToHsl(parseColorToRgba(getComputedStyle(element).backgroundColor)));
+}
+*/
+
 			// Update style attribute.
 			element.setAttribute('style', styleMapToString(styleMap) || '');
 
 			// Invert child elements.
 			element.childNodes.forEach(child => {
 				if (child instanceof HTMLElement) {
-					ns.invert(child, defaultDarkBackColorRgba, { ...options, tableBrightnessBoost: elementIsTable ? 0 : options.tableBrightnessBoost });
+					js.invert(child, defaultDarkBackColorRgba, { ...options, tableBrightnessBoost: elementIsTable ? 0 : options.tableBrightnessBoost });
 				}
 			});
+
+/*
+// NEW: Reapply transparent backgrounds to descendants after child inversion
+if (elementIsTable == true) {
+	element.querySelectorAll('tr, td, table').forEach(child => {
+		child.style.backgroundColor = 'transparent !important';
+		// Debug final descendant backgrounds
+		console.log('Final Descendant:', child.tagName, 'Computed Background:', getComputedStyle(child).backgroundColor);
+	});
+	// Debug final computed style for table
+	console.log('Table Final:', element.getAttribute('bgcolor') || 'No bgcolor',
+				'Computed:', getComputedStyle(element).backgroundColor,
+				'HSL:', rgbToHsl(parseColorToRgba(getComputedStyle(element).backgroundColor)));
+}
+*/
+
 		}
 	} // invertElement
 
@@ -490,7 +475,7 @@ window.rpc_rcm_patches = window.rpc_rcm_patches || {};
 			return;
 		}
 
-		invertElement(element, { r: 33, g: 41, b: 44, a: 1 }, { handleTables: true, tableBrightnessBoost: 1, lightnessThreshold: 35 });
+		invertElement(element, { r: 33, g: 41, b: 44, a: 1 }, { handleTables: true, tableBrightnessBoost: 5, lightnessThreshold: 35 });
 	} // invert
 
 	// Revert the HTML element and all child elements from the modifications made by teh 'invert' method..

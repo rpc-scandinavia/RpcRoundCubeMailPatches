@@ -1,4 +1,7 @@
-(function() {
+// Ensure the namespace exists.
+window.rpc_rcm_patches = window.rpc_rcm_patches || {};
+
+(function(ns) {
 	//------------------------------------------------------------------------------------------------------------------
 	// Mail viewer.
 	//------------------------------------------------------------------------------------------------------------------
@@ -156,12 +159,12 @@
 		// Invert child elements.
 		element.childNodes.forEach(child => {
 			if (child instanceof HTMLElement) {
-				invert(child);
+				ns.invert(child);
 			}
 		});
 	} // invert
 
-	function revert(element) {
+	ns.revert = function(element) {
 		if ((element instanceof HTMLElement) == false) {
 			return;
 		}
@@ -188,73 +191,9 @@
 		// Revert child elements.
 		element.childNodes.forEach(child => {
 			if (child instanceof HTMLElement) {
-				revert(child);
+				ns.revert(child);
 			}
 		});
 	} // revert
 
-	document.addEventListener('DOMContentLoaded', () => {
-		//--------------------------------------------------------------------------------------------------------------
-		// Mail editor.
-		// This plugin assumes that RCM adds and removes the "dark-mode" class on the "html" element, specifying whether dark
-		// mode is enabled or not. But RCM does not set the "dark-mode" class on the "html" element when the mail editor is
-		// created/initialised, RCM does however set the "dark-mode" class on the "html" element when the user toggles between
-		// dark and light mode.
-		//
-		// Because the web page is reloaded when the user opens the mail editor to compose a new message, there is no need to
-		// listen/observe anything, just check if TinyMCE is there, and set the class if needed in a TinyMCE 'init' event.
-		//--------------------------------------------------------------------------------------------------------------
-		if ((window.tinyMCE != null) && (document.documentElement.classList.contains('dark-mode')) == true) {
-			window.tinyMCE.on('AddEditor', e => e.editor.on('init', () => e.editor.getDoc().documentElement.classList.add('dark-mode')));
-		}
-
-		//--------------------------------------------------------------------------------------------------------------
-		// Mail viewer.
-		//--------------------------------------------------------------------------------------------------------------
-		const htmlElement = document.querySelector('html');
-		const messageBodyElement = document.querySelector('#messagebody');
-
-		// Get the body element of the message viewer, and only apply our logic if that body exist.
-		if (messageBodyElement == null) {
-			return;
-		}
-
-		// Try to prevent white flash.
-		htmlElement.style.background = 'transparent';
-		if (document.body) {
-			document.body.style.background = 'transparent';
-		}
-
-		// Initialize the current state.
-		let inverted = false;
-
-		function toggleDarkMode() {
-			const isDark = htmlElement.classList.contains('dark-mode');
-			if ((isDark == true) && (inverted == false)) {
-				invert(messageBodyElement);
-				inverted = true;
-			} else if ((isDark == false) && (inverted == true)) {
-				revert(messageBodyElement);
-				inverted = false;
-			}
-		} // toggleDarkMode
-
-		// Initialize the current state.
-		toggleDarkMode();
-
-		// Observe when the 'dark-mode' class is added or removed from the HTML element.
-		const htmlObserver = new MutationObserver((mutationsList) => {
-			const wasDark = mutationsList.some(m => m.oldValue?.includes('dark-mode'));
-			const isNowDark = htmlElement.classList.contains('dark-mode');
-			if (wasDark !== isNowDark) {
-				toggleDarkMode();
-			}
-		});
-
-		htmlObserver.observe(htmlElement, {
-			attributes: true,
-			attributeFilter: ['class'],
-			attributeOldValue: true
-		});
-	});
-})();
+})(window.rpc_rcm_patches);

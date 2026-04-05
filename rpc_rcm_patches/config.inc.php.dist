@@ -13,6 +13,13 @@ $config['strip_inline_backgrounds'] = false;
 // Flag to enforce "strip_inline_backgrounds", overriding user preferences.
 $config['strip_inline_backgrounds_force'] = false;
 
+// Whether to show and enable a dark/light toggle button in the message viewer.
+$config['viewer_button_enabled'] = true;
+
+// Flag to enforce "viewer_button_enabled", overriding user preferences.
+$config['viewer_button_enabled_force'] = false;
+
+
 // Whether to use the modified Inter font.
 // Accepted enable values are: "yes" (default), "viewer", "editor".
 $config['use_scandinavian_inter_font'] = "";

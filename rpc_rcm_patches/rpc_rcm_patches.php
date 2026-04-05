@@ -23,17 +23,19 @@ class rpc_rcm_patches extends rcube_plugin {
 	private const CONFIG_INVERT_IMPLEMENTATION_FORCE = 'invert_implementation_force';
 	private const CONFIG_STRIP_INLINE_BACKGROUNDS = 'strip_inline_backgrounds';
 	private const CONFIG_STRIP_INLINE_BACKGROUNDS_FORCE = 'strip_inline_backgrounds_force';
+	private const CONFIG_VIEVER_BUTTON_ENABLED = 'viewer_button_enabled';
+	private const CONFIG_VIEVER_BUTTON_ENABLED_FORCE = 'viewer_button_enabled_force';
 	private const CONFIG_USE_SCANDINAVIAN_INTER_FONT = 'use_scandinavian_inter_font';
 	private const CONFIG_USE_SCANDINAVIAN_INTER_FONT_FORCE = 'use_scandinavian_inter_font_force';
 
-	private const PLUGIN_VERSION = '2025.0';
+	private const PLUGIN_VERSION = '2026.0';
 	private const PLUGIN_INFO = [
 		'name' => 'rpc_rcm_patches',
 		'vendor' => 'RPC Scandinavia',
 		'version' => self::PLUGIN_VERSION,
 		'license' => 'GPL-3.0',
 		'uri' => 'https://github.com/rpc-scandinavia/RpcRoundCubeMailPatches/'
-    ];
+	];
 //    public $task = 'mail';
 	private $rcmail;
 
@@ -41,40 +43,68 @@ class rpc_rcm_patches extends rcube_plugin {
 		return self::PLUGIN_INFO;
 	} // Info
 
-    function init() {
+	function init() {
 		$this->rcmail = rcmail::get_instance();
-        $this->add_texts('localization');
+		$this->add_texts('localization');
 		$this->load_config();
 		$this->init_settings();
 		$this->init_viewer();
 		$this->init_editor();
 		$this->init_font();
-    } // init
+	} // init
 
 	//------------------------------------------------------------------------------------------------------------------
 	// Message viewer.
 	//------------------------------------------------------------------------------------------------------------------
 	function init_viewer() {
 		// Enable dark mode for the message viewer.
+		// Each implementation must contain the following functions in the "window.rpc_rcm_patches" namespace:
+		//	invert(element)
+		//	revert(element)
+		$this->include_script('darkmode-viewer.js');
 		switch ($this->rcmail->config->get(self::CONFIG_INVERT_IMPLEMENTATION, 'classic')) {
 			case 'test':
-        		$this->include_script('darkmode-viewer-test.js');
-        		break;
+				$this->include_script('darkmode-viewer-test.js');
+				break;
 			case 'color':
 			case 'colour':
-        		$this->include_script('darkmode-viewer-colour.js');
-        		break;
+				$this->include_script('darkmode-viewer-colour.js');
+				break;
 			case 'classic':
 			default:
-        		$this->include_script('darkmode-viewer-classic.js');
-        		break;
+				$this->include_script('darkmode-viewer-classic.js');
+				break;
 		}
 
 		// Enable stripping inline backgrounds CSS.
-        $this->include_stylesheet('skin/elastic/darkmode-patches.css');
+		$this->include_stylesheet('skin/elastic/darkmode-patches.css');
 		if ($this->rcmail->config->get(self::CONFIG_STRIP_INLINE_BACKGROUNDS, false) == true) {
-            $this->include_stylesheet('skin/elastic/darkmode-strip-inline-backgrounds.css');
-        }
+			$this->include_stylesheet('skin/elastic/darkmode-strip-inline-backgrounds.css');
+		}
+
+		// Enable message viewer buttons (toggling dark/light mode).
+		if ($this->rcmail->config->get(self::CONFIG_VIEVER_BUTTON_ENABLED, true) == true) {
+			$this->add_button([
+				'command' => 'plugin.rpc_rcm_patches.viewer_dark',
+				'type' => 'link',
+				'class' => 'button theme dark disabled',
+				'classact' => 'button theme dark',
+				'classsel' => 'button theme dark pressed',
+				'innerclass' => 'inner',
+				'title' => 'rpc_rcm_patches.viewer_button_dark_info',
+				'label' => 'rpc_rcm_patches.viewer_button_dark_text',
+			], 'toolbar');
+			$this->add_button([
+				'command' => 'plugin.rpc_rcm_patches.viewer_light',
+				'type' => 'link',
+				'class' => 'button theme light disabled',
+				'classact' => 'button theme light',
+				'classsel' => 'button theme light pressed',
+				'innerclass' => 'inner',
+				'title' => 'rpc_rcm_patches.viewer_button_light_info',
+				'label' => 'rpc_rcm_patches.viewer_button_light_text',
+			], 'toolbar');
+		}
 	} // init_viewer
 
 	//------------------------------------------------------------------------------------------------------------------
@@ -86,10 +116,10 @@ class rpc_rcm_patches extends rcube_plugin {
 	// But note that the "skins/elastic" part is automatically prepended the configured value!
 	//------------------------------------------------------------------------------------------------------------------
 	function init_editor() {
-        // 1) Create merged mail editor CSS file if needed.
+		// 1) Create merged mail editor CSS file if needed.
 		$embed_path = RCUBE_INSTALL_PATH . 'skins/elastic/styles/embed.min.css';
-        $dark_path = __DIR__ . '/skin/elastic/darkmode-editor.css';
-        $merged_path = __DIR__ . '/skin/elastic/darkmode-editor-all.css';
+		$dark_path = __DIR__ . '/skin/elastic/darkmode-editor.css';
+		$merged_path = __DIR__ . '/skin/elastic/darkmode-editor-all.css';
 		if ((is_readable($embed_path) == true) &&
 			(is_readable($dark_path) == true) &&
 			((file_exists($merged_path) == false) ||
@@ -108,7 +138,7 @@ class rpc_rcm_patches extends rcube_plugin {
 
 		// 2) Configure Roundcube to use the merged mail editor CSS file with TinyMCE.
 		// But note that the "skins/elastic" part is automatically prepended the configured value, thus "../../"!
-        $this->rcmail->config->set('editor_css_location', '/../../plugins/rpc_rcm_patches/skin/elastic/darkmode-editor-all.css');
+		$this->rcmail->config->set('editor_css_location', '/../../plugins/rpc_rcm_patches/skin/elastic/darkmode-editor-all.css');
 	} // init_editor
 
 	//------------------------------------------------------------------------------------------------------------------
@@ -117,7 +147,7 @@ class rpc_rcm_patches extends rcube_plugin {
 	function init_font() {
 		$userFont = $this->rcmail->config->get(self::CONFIG_USE_SCANDINAVIAN_INTER_FONT, 'yes');
 		if (($userFont == 'yes') || ($userFont == "viewer")) {
-            $this->include_stylesheet('skin/elastic/scandinavian-inter-font.css');
+			$this->include_stylesheet('skin/elastic/scandinavian-inter-font.css');
 		}
 		if (($userFont == 'yes') || ($userFont == 'editor')) {
 			$availableFonts = $this->rcmail->config->get('available_fonts', null);
@@ -126,7 +156,7 @@ class rpc_rcm_patches extends rcube_plugin {
 				ksort($availableFonts);
 				$this->rcmail->config->set('available_fonts', $availableFonts);
 			}
-	        $this->rcmail->config->set('default_font', 'Inter');
+			$this->rcmail->config->set('default_font', 'Inter');
 		}
 	} // init_font
 
@@ -135,8 +165,8 @@ class rpc_rcm_patches extends rcube_plugin {
 	//------------------------------------------------------------------------------------------------------------------
 	function init_settings() {
 		$this->add_hook('login_after', [$this, 'clean_preferences_hook']);
-        $this->add_hook('preferences_list', [$this, 'settings_list_hook']);
-        $this->add_hook('preferences_save', [$this, 'settings_save_hook']);
+		$this->add_hook('preferences_list', [$this, 'settings_list_hook']);
+		$this->add_hook('preferences_save', [$this, 'settings_save_hook']);
 	} // init_settings
 
 	public function clean_preferences_hook($args) {
@@ -146,6 +176,9 @@ class rpc_rcm_patches extends rcube_plugin {
 		}
 		if ($this->rcmail->config->get(self::CONFIG_STRIP_INLINE_BACKGROUNDS_FORCE, false) == true) {
 			$this->delete_user_preference(self::CONFIG_STRIP_INLINE_BACKGROUNDS);
+		}
+		if ($this->rcmail->config->get(self::CONFIG_CONFIG_VIEVER_BUTTON_ENABLED_FORCE, false) == true) {
+			$this->delete_user_preference(self::CONFIG_VIEVER_BUTTON_ENABLED);
 		}
 		if ($this->rcmail->config->get(self::CONFIG_USE_SCANDINAVIAN_INTER_FONT_FORCE, false) == true) {
 			$this->delete_user_preference(self::CONFIG_USE_SCANDINAVIAN_INTER_FONT);
@@ -173,6 +206,7 @@ class rpc_rcm_patches extends rcube_plugin {
 	public function settings_list_hook($args) {
 		if ((($this->rcmail->config->get(self::CONFIG_INVERT_IMPLEMENTATION_FORCE, false) == false) ||
 			($this->rcmail->config->get(self::CONFIG_STRIP_INLINE_BACKGROUNDS_FORCE, false) == false) ||
+			($this->rcmail->config->get(self::CONFIG_VIEVER_BUTTON_ENABLED_FORCE, false) == false) ||
 			($this->rcmail->config->get(self::CONFIG_USE_SCANDINAVIAN_INTER_FONT_FORCE, false) == false)) &&
 			(isset($args['section']) == true) &&
 			($args['section'] == 'mailview')) {
@@ -212,6 +246,20 @@ class rpc_rcm_patches extends rcube_plugin {
 				];
 			}
 
+			// Add message viewer button enable.
+			if ($this->rcmail->config->get(self::CONFIG_VIEVER_BUTTON_ENABLED_FORCE, true) == false) {
+				$configViewerButtonEnabled = $this->rcmail->config->get(self::CONFIG_VIEVER_BUTTON_ENABLED, false);
+				$optionViewerButtonEnabled = new html_checkbox([
+					'name' => '_viewer_button_enabled',
+					'id' => 'viewer_button_enabled',
+					'value' => ($configViewerButtonEnabled == true) ? 1 : 0,
+				]);
+				$args['blocks']['rpc_rcm_patches']['options'][self::CONFIG_VIEVER_BUTTON_ENABLED] = [
+					'title' => html::label('viewer_button_enabled', $this->gettext('viewer_button_enabled')),
+					'content' => $optionViewerButtonEnabled->show($configViewerButtonEnabled),
+				];
+			}
+
 			// Add Inter font usage selection.
 			if ($this->rcmail->config->get(self::CONFIG_USE_SCANDINAVIAN_INTER_FONT_FORCE, false) == false) {
 				$configFont = $this->rcmail->config->get(self::CONFIG_USE_SCANDINAVIAN_INTER_FONT, 'yes');
@@ -243,14 +291,20 @@ class rpc_rcm_patches extends rcube_plugin {
 				unset($args['prefs'][self::CONFIG_STRIP_INLINE_BACKGROUNDS]);
 			}
 
+			if ($this->rcmail->config->get(self::CONFIG_VIEVER_BUTTON_ENABLED_FORCE, false) == false) {
+				$args['prefs'][self::CONFIG_VIEVER_BUTTON_ENABLED] = (rcube_utils::get_input_string('_viewer_button_enabled', rcube_utils::INPUT_POST) != '') ? true : false;
+			} else {
+				unset($args['prefs'][self::CONFIG_VIEVER_BUTTON_ENABLED]);
+			}
+
 			if ($this->rcmail->config->get(self::CONFIG_USE_SCANDINAVIAN_INTER_FONT_FORCE, false) == false) {
 				$args['prefs'][self::CONFIG_USE_SCANDINAVIAN_INTER_FONT] = rcube_utils::get_input_string('_user_scandinavian_inter_font', rcube_utils::INPUT_POST);
 			} else {
 				unset($args['prefs'][self::CONFIG_USE_SCANDINAVIAN_INTER_FONT]);
 			}
-        }
+		}
 
-        return $args;
+		return $args;
 	} // settings_save_hook
 
 } // rpc_rcm_patches
