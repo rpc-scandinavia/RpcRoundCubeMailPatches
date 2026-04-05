@@ -23,8 +23,8 @@ class rpc_rcm_patches extends rcube_plugin {
 	private const CONFIG_INVERT_IMPLEMENTATION_FORCE = 'invert_implementation_force';
 	private const CONFIG_STRIP_INLINE_BACKGROUNDS = 'strip_inline_backgrounds';
 	private const CONFIG_STRIP_INLINE_BACKGROUNDS_FORCE = 'strip_inline_backgrounds_force';
-	private const CONFIG_VIEVER_BUTTON_ENABLED = 'viewer_button_enabled';
-	private const CONFIG_VIEVER_BUTTON_ENABLED_FORCE = 'viewer_button_enabled_force';
+	private const CONFIG_VIEWER_BUTTON_ENABLED = 'viewer_button_enabled';
+	private const CONFIG_VIEWER_BUTTON_ENABLED_FORCE = 'viewer_button_enabled_force';
 	private const CONFIG_USE_SCANDINAVIAN_INTER_FONT = 'use_scandinavian_inter_font';
 	private const CONFIG_USE_SCANDINAVIAN_INTER_FONT_FORCE = 'use_scandinavian_inter_font_force';
 
@@ -83,7 +83,7 @@ class rpc_rcm_patches extends rcube_plugin {
 		}
 
 		// Enable message viewer buttons (toggling dark/light mode).
-		if ($this->rcmail->config->get(self::CONFIG_VIEVER_BUTTON_ENABLED, true) == true) {
+		if ($this->rcmail->config->get(self::CONFIG_VIEWER_BUTTON_ENABLED, true) == true) {
 			$this->add_button([
 				'command' => 'plugin.rpc_rcm_patches.viewer_dark',
 				'type' => 'link',
@@ -177,8 +177,8 @@ class rpc_rcm_patches extends rcube_plugin {
 		if ($this->rcmail->config->get(self::CONFIG_STRIP_INLINE_BACKGROUNDS_FORCE, false) == true) {
 			$this->delete_user_preference(self::CONFIG_STRIP_INLINE_BACKGROUNDS);
 		}
-		if ($this->rcmail->config->get(self::CONFIG_CONFIG_VIEVER_BUTTON_ENABLED_FORCE, false) == true) {
-			$this->delete_user_preference(self::CONFIG_VIEVER_BUTTON_ENABLED);
+		if ($this->rcmail->config->get(self::CONFIG_CONFIG_VIEWER_BUTTON_ENABLED_FORCE, false) == true) {
+			$this->delete_user_preference(self::CONFIG_VIEWER_BUTTON_ENABLED);
 		}
 		if ($this->rcmail->config->get(self::CONFIG_USE_SCANDINAVIAN_INTER_FONT_FORCE, false) == true) {
 			$this->delete_user_preference(self::CONFIG_USE_SCANDINAVIAN_INTER_FONT);
@@ -206,7 +206,7 @@ class rpc_rcm_patches extends rcube_plugin {
 	public function settings_list_hook($args) {
 		if ((($this->rcmail->config->get(self::CONFIG_INVERT_IMPLEMENTATION_FORCE, false) == false) ||
 			($this->rcmail->config->get(self::CONFIG_STRIP_INLINE_BACKGROUNDS_FORCE, false) == false) ||
-			($this->rcmail->config->get(self::CONFIG_VIEVER_BUTTON_ENABLED_FORCE, false) == false) ||
+			($this->rcmail->config->get(self::CONFIG_VIEWER_BUTTON_ENABLED_FORCE, false) == false) ||
 			($this->rcmail->config->get(self::CONFIG_USE_SCANDINAVIAN_INTER_FONT_FORCE, false) == false)) &&
 			(isset($args['section']) == true) &&
 			($args['section'] == 'mailview')) {
@@ -247,14 +247,14 @@ class rpc_rcm_patches extends rcube_plugin {
 			}
 
 			// Add message viewer button enable.
-			if ($this->rcmail->config->get(self::CONFIG_VIEVER_BUTTON_ENABLED_FORCE, true) == false) {
-				$configViewerButtonEnabled = $this->rcmail->config->get(self::CONFIG_VIEVER_BUTTON_ENABLED, false);
+			if ($this->rcmail->config->get(self::CONFIG_VIEWER_BUTTON_ENABLED_FORCE, true) == false) {
+				$configViewerButtonEnabled = $this->rcmail->config->get(self::CONFIG_VIEWER_BUTTON_ENABLED, false);
 				$optionViewerButtonEnabled = new html_checkbox([
 					'name' => '_viewer_button_enabled',
 					'id' => 'viewer_button_enabled',
 					'value' => ($configViewerButtonEnabled == true) ? 1 : 0,
 				]);
-				$args['blocks']['rpc_rcm_patches']['options'][self::CONFIG_VIEVER_BUTTON_ENABLED] = [
+				$args['blocks']['rpc_rcm_patches']['options'][self::CONFIG_VIEWER_BUTTON_ENABLED] = [
 					'title' => html::label('viewer_button_enabled', $this->gettext('viewer_button_enabled')),
 					'content' => $optionViewerButtonEnabled->show($configViewerButtonEnabled),
 				];
@@ -291,10 +291,10 @@ class rpc_rcm_patches extends rcube_plugin {
 				unset($args['prefs'][self::CONFIG_STRIP_INLINE_BACKGROUNDS]);
 			}
 
-			if ($this->rcmail->config->get(self::CONFIG_VIEVER_BUTTON_ENABLED_FORCE, false) == false) {
-				$args['prefs'][self::CONFIG_VIEVER_BUTTON_ENABLED] = (rcube_utils::get_input_string('_viewer_button_enabled', rcube_utils::INPUT_POST) != '') ? true : false;
+			if ($this->rcmail->config->get(self::CONFIG_VIEWER_BUTTON_ENABLED_FORCE, false) == false) {
+				$args['prefs'][self::CONFIG_VIEWER_BUTTON_ENABLED] = (rcube_utils::get_input_string('_viewer_button_enabled', rcube_utils::INPUT_POST) != '') ? true : false;
 			} else {
-				unset($args['prefs'][self::CONFIG_VIEVER_BUTTON_ENABLED]);
+				unset($args['prefs'][self::CONFIG_VIEWER_BUTTON_ENABLED]);
 			}
 
 			if ($this->rcmail->config->get(self::CONFIG_USE_SCANDINAVIAN_INTER_FONT_FORCE, false) == false) {
