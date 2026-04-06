@@ -111,23 +111,6 @@ Because files are written, the following file permissions are required:
 ```sh
 chmod  u+w  plugins/rpc_rcm_patches/skin/elastic
 ```
-## Examples
-
-### Message editor
-![image](/home/rpc@rpc-scandinavia.dk/Development/Other/RpcRoundCubeMailPatches/images/dark-mode-example1.png)
-
-
-### Message viewer
-![image](/home/rpc@rpc-scandinavia.dk/Development/Other/RpcRoundCubeMailPatches/images/dark-mode-example5.png)
-
-![image](/home/rpc@rpc-scandinavia.dk/Development/Other/RpcRoundCubeMailPatches/images/dark-mode-example6.png)
-
-
-#### The same message in RoundCubeMail and Thunderbird
-![image](/home/rpc@rpc-scandinavia.dk/Development/Other/RpcRoundCubeMailPatches/images/dark-mode-example7-in-rcm.png)
-
-![image](/home/rpc@rpc-scandinavia.dk/Development/Other/RpcRoundCubeMailPatches/images/dark-mode-example7-in-thunderbird.png)
-
 
 ## Installation
 
@@ -152,7 +135,20 @@ Changes made.
 |2026.0|Added a button in the message toolbar, that can toggle between dark  and light mode, when the application is in dark mode.|
 |2025.0|Initial version.|
 
-René Paw Christensen
+## Examples
 
+### Message editor
+<img src="images/dark-mode-example1.png" alt="Message editor in dark mode" width="80%" />
+
+### Message viewer
+<img src="images/dark-mode-example5.png" alt="Message viewer in dark mode" width="80%" />
+<img src="images/dark-mode-example6.png" alt="Message viewer in dark mode" width="80%" />
+
+#### The same message in RoundCubeMail and Thunderbird
+<img src="images/dark-mode-example7-in-rcm.png" alt="Message viewer in dark mode" width="80%" />
+<img src="images/dark-mode-example7-in-thunderbird.png" alt="Thunderbird in dark mode" width="80%" />
+
+
+René Paw Christensen
 <https://rpc-scandinavia.dk/>
 
