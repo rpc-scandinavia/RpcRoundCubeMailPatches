@@ -96,7 +96,7 @@ toggles between **dark** and **light** mode.
 
 The message editor **css** is fixed by creating a new **css** file containing the
 existing **css** from `skins/elastic/styles/embed.min.css` and some additional
-** css**. The RCM configuration setting `editor_css_location` is set with the
+**css**. The RCM configuration setting `editor_css_location` is set with the
 path to the new combined **css** file, which causes RCM to use that file when it
 initialises the mail editor (TinyMCE).
 
