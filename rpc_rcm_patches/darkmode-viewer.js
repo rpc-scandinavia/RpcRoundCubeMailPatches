@@ -16,7 +16,7 @@ window.addEventListener("DOMContentLoaded", function () {
 window.rpc_rcm_patches = window.rpc_rcm_patches || {};
 
 (function(ns) {
-	ns.LOG_TO_CONSOLE = true;
+	ns.LOG_TO_CONSOLE = false;
 	ns.TASK_MAIL = "task-mail";
 	ns.ACTION_NONE = "action-none";
 	ns.ACTION_SHOW = "action-show";

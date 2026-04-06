@@ -134,7 +134,7 @@ window.rpc_rcm_patches = window.rpc_rcm_patches || {};
 		};
 	} // invertColors
 
-    function invert(element) {
+    ns.invert = function(element) {
         if ((element instanceof HTMLElement) == false) {
 			return;
 		}
