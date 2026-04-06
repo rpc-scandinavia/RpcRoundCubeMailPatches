@@ -76,6 +76,10 @@ fund a way) to hide the element from plug-in code any earlier then in the
 **DOMContentLoaded** event listener. This fix is actually also done in the message
 viewer, just inside the IFrame.
 
+I am concidering to remove the second fix, because it actually causes a blink 
+because the message is briefly shown, then hidden and inverted if in dark mode, and 
+finally shown again. It is basicly the top 11 lines in `darkmode-viewer.js`.
+
 ## Mail editor (TinyMCE)
 
 RCM does not set the `dark-mode` class on the `html` element when the mail
