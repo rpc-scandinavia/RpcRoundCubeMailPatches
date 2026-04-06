@@ -143,8 +143,9 @@ Basic steps to install this plugin:
 
 Changes made.
 
-|Version|Description||-|-||2026.0|Added a button in the message toolbar, that
-can toggle between dark  and light mode, when the application is in dark mode.|
+|Version|Description|
+|-|-|
+|2026.0|Added a button in the message toolbar, that can toggle between dark  and light mode, when the application is in dark mode.|
 |2025.0|Initial version.|
 
 René Paw Christensen
