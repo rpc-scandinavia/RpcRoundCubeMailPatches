@@ -74,6 +74,7 @@ class rpc_rcm_patches extends rcube_plugin {
 		//	invert(element)
 		//	revert(element)
 		$this->include_script('darkmode-viewer.js');
+		$this->include_script('darkmode-tools.js');
 		switch ($this->rcmail->config->get(self::CONFIG_INVERT_IMPLEMENTATION, 'classic')) {
 			case 'test':
 				$this->include_script('darkmode-viewer-test.js');

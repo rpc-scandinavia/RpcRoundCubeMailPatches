@@ -5,63 +5,6 @@ window.rpc_rcm_patches = window.rpc_rcm_patches || {};
 	//------------------------------------------------------------------------------------------------------------------
 	// Mail viewer.
 	//------------------------------------------------------------------------------------------------------------------
-	function valuesToRgba(r, g, b, a) {
-		return { r, g, b, a };
-	} // valuesToRgba
-
-	function parseRgba(str) {
-		const match = str.match(/rgba?\((\d+), ?(\d+), ?(\d+)(?:, ?([\d.]+))?\)/);
-		if (match == null) {
-			return valuesToRgba(0, 0, 0, 0);
-		}
-		const [, r, g, b, a = 1] = match;
-		return valuesToRgba(+r, +g, +b, +a);
-	} // parseRgba
-
-	function rgbToHsl({ r, g, b, a }) {
-		r /= 255;
-		g /= 255;
-		b /= 255;
-		const cmin = Math.min(r, g, b);
-		const cmax = Math.max(r, g, b);
-		const delta = cmax - cmin;
-
-		let h = 0;
-		let s = 0;
-		let l = (cmax + cmin) / 2;
-		if (delta !== 0) {
-			if (cmax === r) {
-				h = ((g - b) / delta) % 6;
-			} else if (cmax === g) {
-				h = (b - r) / delta + 2;
-			} else {
-				h = (r - g) / delta + 4;
-			}
-			h = Math.round(h * 60);
-			if (h < 0) {
-				h += 360;
-			}
-			s = delta / (1 - Math.abs(2 * l - 1));
-		}
-
-		return {
-			h,
-			s: +(s * 100).toFixed(1),
-			l: +(l * 100).toFixed(1),
-			a
-		};
-	} // rgbToHsl
-
-	function styleMapToString(styleMap) {
-		if (Object.keys(styleMap).length > 0) {
-			return Object.entries(styleMap)
-				.map(([key, val]) => `${key}: ${val}`)
-				.join('; ');
-		} else {
-			return null;
-		}
-	} // styleMapToString
-
 	function invertColors(originalBackColor, originalTextColor, originalStyleAttr) {
 		// Parse style attribute string into a map.
 		let styleMap = {};
@@ -88,9 +31,9 @@ window.rpc_rcm_patches = window.rpc_rcm_patches || {};
 			originalTextColor = styleMap['color'];
 		}
 
-		const bg = parseRgba(originalBackColor);
-		const fg = parseRgba(originalTextColor);
-		const hsla = rgbToHsl(bg);
+		const bg = ns.parseColorToRgba(originalBackColor);
+		const fg = ns.parseColorToRgba(originalTextColor);
+		const hsla = ns.rgbToHsl(bg);
 		let newBackgroundColor = 'inherit';
 		let newTextColor = 'inherit';
 
@@ -103,7 +46,7 @@ window.rpc_rcm_patches = window.rpc_rcm_patches || {};
 			const invBg = { r: 255 - bg.r, g: 255 - bg.g, b: 255 - bg.b, a: bg.a };
 			const invFg = { r: 255 - fg.r, g: 255 - fg.g, b: 255 - fg.b, a: fg.a };
 
-			const invHSLA = rgbToHsl(invBg);
+			const invHSLA = ns.rgbToHsl(invBg);
 			if (invHSLA.l < 10) {
 				newBackgroundColor = 'transparent';
 				newTextColor = `rgba(${invFg.r}, ${invFg.g}, ${invFg.b}, ${invFg.a})`;
@@ -112,7 +55,7 @@ window.rpc_rcm_patches = window.rpc_rcm_patches || {};
 				newTextColor = `rgba(${invFg.r}, ${invFg.g}, ${invFg.b}, ${invFg.a})`;
 			}
 		} else if ((bg.r === 0) && (bg.g === 0) && (bg.b === 0) && (bg.a === 0)) {
-			const textHSLA = rgbToHsl(fg);
+			const textHSLA = ns.rgbToHsl(fg);
 			if ((textHSLA.s < 15) && (textHSLA.l < 45)) {
 				newBackgroundColor = 'inherit';
 				newTextColor = `rgba(${255 - fg.r}, ${255 - fg.g}, ${255 - fg.b}, ${fg.a})`;
@@ -130,7 +73,7 @@ window.rpc_rcm_patches = window.rpc_rcm_patches || {};
 		return {
 			newBackground: newBackgroundColor,
 			newText: newTextColor,
-			newStyle: styleMapToString(styleMap)
+			newStyle: ns.styleMapToString(styleMap)
 		};
 	} // invertColors
 

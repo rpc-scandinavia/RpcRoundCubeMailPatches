@@ -2,227 +2,6 @@
 window.rpc_rcm_patches = window.rpc_rcm_patches || {};
 
 (function(ns) {
-	//------------------------------------------------------------------------------------------------------------------
-	// Mail viewer.
-	//------------------------------------------------------------------------------------------------------------------
-	const transparenRgba = { r: 0, g: 0, b: 0, a: 0 };
-
-	function parseColorToRgba(rawColorStr, computedColorStr = '') {
-		// Helper to normalize and validate RGBA values.
-		function valuesToRgba(r, g, b, a = 1) {
-			return {
-					r: Math.max(0, Math.min(255, Math.round(r))),
-					g: Math.max(0, Math.min(255, Math.round(g))),
-					b: Math.max(0, Math.min(255, Math.round(b))),
-					a: Math.max(0, Math.min(1, Number(a.toFixed(3))))
-			};
-		} // valuesToRgba
-
-		// Helper to parse hex colour.
-		function parseHex(hex) {
-			hex = hex.replace(/^#/, '');
-			let r, g, b, a = 1;
-			if (hex.length === 6) {
-				r = parseInt(hex.slice(0, 2), 16);
-				g = parseInt(hex.slice(2, 4), 16);
-				b = parseInt(hex.slice(4, 6), 16);
-			} else if (hex.length === 8) {
-				r = parseInt(hex.slice(0, 2), 16);
-				g = parseInt(hex.slice(2, 4), 16);
-				b = parseInt(hex.slice(4, 6), 16);
-				a = parseInt(hex.slice(6, 8), 16) / 255;
-			} else {
-				return null;
-			}
-			return { r, g, b, a };
-		} // parseHex
-
-		// Helper to parse rgb/rgba string.
-		function parseRgb(rgb) {
-			const match = rgb.match(/^rgb(a?)\((\d+),\s*(\d+),\s*(\d+)(?:,\s*([\d.]+))?\)$/i);
-			if (!match) {
-				return null;
-			}
-			const [, isRgba, r, g, b, a = 1] = match;
-			return valuesToRgba(Number(r), Number(g), Number(b), Number(a));
-		} // parseRgb
-
-		// Helper to parse hsl/hsla string.
-		function parseHsl(hsl) {
-			const match = hsl.match(/^hsl(a?)\((\d+),\s*(\d+)%,\s*(\d+)%(?:,\s*([\d.]+))?\)$/i);
-			if (!match) {
-				return null;
-			}
-			const [, isHsla, h, s, l, a = 1] = match;
-			return hslToRgb({
-				h: Number(h),
-				s: Number(s) / 100,
-				l: Number(l) / 100,
-				a: Number(a)
-			});
-		} // parseHsl
-
-		// Try parsing the raw colour string.
-		let result = null;
-		rawColorStr = rawColorStr.trim();
-
-		if (rawColorStr.startsWith('#') == true) {
-			result = parseHex(rawColorStr);
-		} else if (rawColorStr.startsWith('rgb') == true) {
-			result = parseRgb(rawColorStr);
-		} else if (rawColorStr.startsWith('hsl') == true) {
-			result = parseHsl(rawColorStr);
-		}
-
-		// If parsing of the raw colour string succeeded, return the result.
-		if ((result) && (isNaN(result.r) == false) && (isNaN(result.g) == false) && (isNaN(result.b) == false) && (isNaN(result.a) == false)) {
-        	return { ...result, a: result.a === 0 ? 1 : result.a };
-    	}
-
-		// Try parsing computed colour string as fallback.
-		if (computedColorStr) {
-			computedColorStr = computedColorStr.trim();
-			if (computedColorStr.startsWith('#') == true) {
-				result = parseHex(computedColorStr);
-			} else if (computedColorStr.startsWith('rgb') == true) {
-				result = parseRgb(computedColorStr);
-			} else if (computedColorStr.startsWith('hsl') == true) {
-				result = parseHsl(computedColorStr);
-			}
-
-			// If parsing of the computed colour string succeeded, return the result.
-			if ((result) && (isNaN(result.r) == false) && (isNaN(result.g) == false) && (isNaN(result.b) == false) && (isNaN(result.a) == false)) {
-				return { ...result, a: result.a === 0 ? 1 : result.a };
-			}
-		}
-
-		// Default if all parsing fails.
-		return valuesToRgba(0, 0, 0, 1);
-	} // parseColorToRgba
-
-	function rgbToHsl({ r, g, b, a = 1 }) {
-		// Validate inputs.
-		if ((Number.isFinite(r) == false) || (Number.isFinite(g) == false) || (Number.isFinite(b) == false) ||
-			(r < 0) || (r > 255) || (g < 0) || (g > 255) || (b < 0) || (b > 255) || (Number.isFinite(a) == false) || (a < 0) || (a > 1)) {
-			return { h: 0, s: 0, l: 0, a: 1 };
-		}
-
-		// Normalize RGB values.
-		r /= 255;
-		g /= 255;
-		b /= 255;
-
-		const cmin = Math.min(r, g, b);
-		const cmax = Math.max(r, g, b);
-		const delta = cmax - cmin;
-
-		let h = 0;
-		let s = 0;
-		let l = (cmax + cmin) / 2;
-
-		if (delta !== 0) {
-			// Calculate hue.
-			if (cmax === r) {
-				h = ((g - b) / delta) % 6;
-			} else if (cmax === g) {
-				h = (b - r) / delta + 2;
-			} else {
-				h = (r - g) / delta + 4;
-			}
-			h = Math.round(h * 60);
-			if (h < 0) {
-				h += 360;
-			}
-
-			// Calculate saturation, handling edge cases.
-			const denominator = 1 - Math.abs(2 * l - 1);
-			s = denominator === 0 ? 0 : delta / denominator;
-		}
-
-		return {
-			h,
-			s: +(s * 100).toFixed(1),
-			l: +(l * 100).toFixed(1),
-			a
-		};
-	} // rgbToHsl
-
-	function hslToRgb({ h, s, l, a = 1 }) {
-		// Validate inputs.
-		if ((Number.isFinite(h) == false) || (h < 0) || (h > 360) ||
-			(Number.isFinite(s) == false) || (s < 0) || (s > 100) ||
-			(Number.isFinite(l) == false) || (l < 0) || (l > 100) ||
-			(Number.isFinite(a) == false) || (a < 0) || (a > 1)) {
-			return { r: 0, g: 0, b: 0, a: 1 }; // Default to opaque black
-		}
-
-		h /= 360;
-		s /= 100;
-		l /= 100;
-
-		let r = 0, g = 0, b = 0;
-
-		if (s === 0) {
-			r = g = b = l;
-		} else {
-			const hue2rgb = (p, q, t) => {
-				if (t < 0) {
-					t += 1;
-				}
-				if (t > 1) {
-					t -= 1;
-				}
-				if (t < 1 / 6) {
-					return p + (q - p) * 6 * t;
-				}
-				if (t < 1 / 2) {
-					return q;
-				}
-				if (t < 2 / 3) {
-					return p + (q - p) * (2 / 3 - t) * 6;
-				}
-				return p;
-			};
-			const q = l < 0.5 ? l * (1 + s) : l + s - l * s;
-			const p = 2 * l - q;
-			r = hue2rgb(p, q, h + 1 / 3);
-			g = hue2rgb(p, q, h);
-			b = hue2rgb(p, q, h - 1 / 3);
-		}
-
-		return {
-			r: Math.round(r * 255),
-			g: Math.round(g * 255),
-			b: Math.round(b * 255),
-			a
-		};
-	} // hslToRgb
-
-	function formatRgba({ r, g, b, a }) {
-		return `rgba(${Math.round(r)}, ${Math.round(g)}, ${Math.round(b)}, ${a})`;
-	} // formatRgba
-
-	function parseStyleString(style) {
-		const styleMap = {};
-		if (!style) {
-			return styleMap;
-		}
-
-		style.split(';').forEach(part => {
-			const match = part.match(/^\s*([^:]+)\s*:\s*(.+)\s*$/);
-			if (match) {
-				styleMap[match[1].toLowerCase()] = match[2];
-			}
-		});
-		return styleMap;
-	} // parseStyleString
-
-	function styleMapToString(styleMap) {
-		const validStyles = Object.entries(styleMap)
-			.filter(([key, val]) => /^[a-z-]+$/i.test(key) && val != null)
-			.map(([key, val]) => `${key}: ${val.trim()}`);
-		return (validStyles.length > 0) ? validStyles.join('; ') : '';
-	} // styleMapToString
 
 	// Invert the background colours for use with dark mode.
 	// The following rules apply:
@@ -236,7 +15,7 @@ window.rpc_rcm_patches = window.rpc_rcm_patches || {};
 	// Rgba return: The inverted background colour.
 	function invertBackColor(originalBackColorRgba, computedBackColorRgba, defaultDarkBackColorRgba, lightnessThreshold) {
 		const effectiveBackColor = ((computedBackColorRgba) && (computedBackColorRgba.a > 0)) ? computedBackColorRgba : originalBackColorRgba;
-		const hsla = rgbToHsl(effectiveBackColor);
+		const hsla = ns.rgbToHsl(effectiveBackColor);
 		let invertedBackColorRgba = defaultDarkBackColorRgba;
 
 		if ((hsla.l < 10) || ((effectiveBackColor.r === 0) && (effectiveBackColor.g === 0) && (effectiveBackColor.b === 0) && (effectiveBackColor.a === 0))) {
@@ -244,11 +23,11 @@ window.rpc_rcm_patches = window.rpc_rcm_patches || {};
 		} else if (hsla.l > lightnessThreshold) { // MODIFIED: Removed redundant nested if
 			hsla.l = 20;
 			hsla.s = (hsla.s === 0) ? 0 : Math.min(100, hsla.s + 30);		// Preserve grayscale.
-			invertedBackColorRgba = hslToRgb(hsla);
+			invertedBackColorRgba = ns.hslToRgb(hsla);
 		} else {
 			hsla.l = Math.max(10, hsla.l - 10);
 			hsla.s = (hsla.s === 0) ? 0 : Math.min(100, hsla.s + 30);		// Preserve grayscale.
-			invertedBackColorRgba = hslToRgb(hsla);
+			invertedBackColorRgba = ns.hslToRgb(hsla);
 		}
 
 		return invertedBackColorRgba;
@@ -281,7 +60,7 @@ window.rpc_rcm_patches = window.rpc_rcm_patches || {};
 				return safeFgRgba;
 			}
 
-			const fgHsla = rgbToHsl(safeFgRgba);
+			const fgHsla = ns.rgbToHsl(safeFgRgba);
 			if (lumBg < 0.3) {
 				fgHsla.l = Math.min(85, Math.max(70, fgHsla.l + 35));				// Light text for dark backgrounds.
 				fgHsla.s = fgHsla.s === 0 ? 0 : Math.min(100, fgHsla.s + 30);		// Vibrant text.
@@ -289,7 +68,7 @@ window.rpc_rcm_patches = window.rpc_rcm_patches || {};
 				fgHsla.l = Math.max(20, fgHsla.l - 40);								// Dark text for mid-tone backgrounds.
 				fgHsla.s = fgHsla.s === 0 ? 0 : Math.min(100, fgHsla.s + 30);							// Vibrant text.
 			}
-			const result = hslToRgb(fgHsla);
+			const result = ns.hslToRgb(fgHsla);
 			return { ...result, a: safeFgRgba.a };
 		} // ensureContrast
 
@@ -316,7 +95,7 @@ window.rpc_rcm_patches = window.rpc_rcm_patches || {};
 		const computedStyle = getComputedStyle(element);
 
 		// Parse style attribute.
-		const styleMap = parseStyleString(originalStyle);
+		const styleMap = ns.parseStyleString(originalStyle);
 
 		// Prefer style-defined colors and store originals.
 		let styleMapBackColor = null;
@@ -371,17 +150,17 @@ window.rpc_rcm_patches = window.rpc_rcm_patches || {};
 			}
 
 			// Update style attribute.
-			element.setAttribute('style', styleMapToString(styleMap) || '');
+			element.setAttribute('style', ns.styleMapToString(styleMap) || '');
 		} else {
 			// Parse colours.
 			const originalBackColorChoosen = (originalBackColorTable) ? originalBackColorTable : originalBackColor;
-			const originalTextColorRgba = parseColorToRgba(originalTextColor, computedStyle.color);
-			const computedBackColorRgba = parseColorToRgba(computedStyle.backgroundColor);
-			const computedTextColorRgba = parseColorToRgba(computedStyle.color);
+			const originalTextColorRgba = ns.parseColorToRgba(originalTextColor, computedStyle.color);
+			const computedBackColorRgba = ns.parseColorToRgba(computedStyle.backgroundColor);
+			const computedTextColorRgba = ns.parseColorToRgba(computedStyle.color);
 
 			// Compute new background colour.
 			let invertedBackColorRgba = invertBackColor(
-				parseColorToRgba(originalBackColorChoosen, computedStyle.backgroundColor),
+				ns.parseColorToRgba(originalBackColorChoosen, computedStyle.backgroundColor),
 				computedBackColorRgba,
 				defaultDarkBackColorRgba,
 				options.lightnessThreshold
@@ -390,9 +169,9 @@ window.rpc_rcm_patches = window.rpc_rcm_patches || {};
 			// Increase the darkest background for tables if specified.
 			if ((elementIsTable == true) && (options.tableBrightnessBoost > 0) && (!element.closest('table table'))) {
 				// Increase lightness by options.tableBrightnessBoost %.
-				const boostedHsla = rgbToHsl(invertedBackColorRgba);
+				const boostedHsla = ns.rgbToHsl(invertedBackColorRgba);
 				boostedHsla.l = Math.min(100, boostedHsla.l + options.tableBrightnessBoost);
-				invertedBackColorRgba = hslToRgb(boostedHsla);
+				invertedBackColorRgba = ns.hslToRgb(boostedHsla);
 			}
 
 			// Compute new text colour using final background.
@@ -407,22 +186,22 @@ window.rpc_rcm_patches = window.rpc_rcm_patches || {};
 				// Use the better supported 'background-color'.
 				element.removeAttribute('bgcolor');
 				styleMapBackColor = 'background-color';
-//				styleMap[styleMapBackColor] = formatRgba(invertedBackColorRgba) + ' !important';
+//				styleMap[styleMapBackColor] = ns.formatRgba(invertedBackColorRgba) + ' !important';
 
 //				// Use unique class for higher specificity.
 //				element.classList.add('darkmode-inverted-table');
 			}
 			if (styleMapBackColor) {
-//				styleMap[styleMapBackColor] = formatRgba(invertedBackColorRgba) + ' !important';
-				styleMap[styleMapBackColor] = formatRgba(invertedBackColorRgba);
+//				styleMap[styleMapBackColor] = ns.formatRgba(invertedBackColorRgba) + ' !important';
+				styleMap[styleMapBackColor] = ns.formatRgba(invertedBackColorRgba);
 			} else {
-//				element.style.backgroundColor = formatRgba(invertedBackColorRgba) + ' !important';
-				element.style.backgroundColor = formatRgba(invertedBackColorRgba);
+//				element.style.backgroundColor = ns.formatRgba(invertedBackColorRgba) + ' !important';
+				element.style.backgroundColor = ns.formatRgba(invertedBackColorRgba);
 			}
 			if (styleMapTextColor) {
-				styleMap[styleMapTextColor] = formatRgba(invertedTextColorRgba);
+				styleMap[styleMapTextColor] = ns.formatRgba(invertedTextColorRgba);
 			} else {
-				element.style.color = formatRgba(invertedTextColorRgba);
+				element.style.color = ns.formatRgba(invertedTextColorRgba);
 			}
 
 /*
@@ -436,12 +215,12 @@ if (elementIsTable == true) {
 	// Debug computed style for table
 	console.log('Table:', element.getAttribute('bgcolor') || 'No bgcolor',
 				'Computed:', getComputedStyle(element).backgroundColor,
-				'HSL:', rgbToHsl(parseColorToRgba(getComputedStyle(element).backgroundColor)));
+				'HSL:', ns.rgbToHsl(ns.parseColorToRgba(getComputedStyle(element).backgroundColor)));
 }
 */
 
 			// Update style attribute.
-			element.setAttribute('style', styleMapToString(styleMap) || '');
+			element.setAttribute('style', ns.styleMapToString(styleMap) || '');
 
 			// Invert child elements.
 			element.childNodes.forEach(child => {
@@ -461,7 +240,7 @@ if (elementIsTable == true) {
 	// Debug final computed style for table
 	console.log('Table Final:', element.getAttribute('bgcolor') || 'No bgcolor',
 				'Computed:', getComputedStyle(element).backgroundColor,
-				'HSL:', rgbToHsl(parseColorToRgba(getComputedStyle(element).backgroundColor)));
+				'HSL:', ns.rgbToHsl(ns.parseColorToRgba(getComputedStyle(element).backgroundColor)));
 }
 */
 
