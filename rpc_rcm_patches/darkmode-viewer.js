@@ -1,3 +1,17 @@
+//----------------------------------------------------------------------------------------------------------------------
+// Try to prevent white flash.
+// This is a little hack, it hides the "message-content" element until the message inversion has been performed.
+// This is restored in "ns.setMode".
+//----------------------------------------------------------------------------------------------------------------------
+window.addEventListener("DOMContentLoaded", function () {
+	const viewerContent = window.document.getElementById("message-content");
+	if (viewerContent) {
+		viewerContent.style.display = "none";
+	}
+}, { capture: true, passive: true })
+
+
+
 // Ensure the namespace exists.
 window.rpc_rcm_patches = window.rpc_rcm_patches || {};
 
@@ -139,6 +153,13 @@ window.rpc_rcm_patches = window.rpc_rcm_patches || {};
 			if (window.document.body.parentElement) {
 				window.document.body.parentElement.style.display = "inline";
 			}
+
+			// Try to prevent white flash.
+			// The "message-content" element was hidden to prevent the white flash, show it now.
+			const viewerContent = window.document.getElementById("message-content");
+			if (viewerContent) {
+				viewerContent.style.display = "inline";
+			}
 		}
 
 
@@ -180,6 +201,13 @@ window.rpc_rcm_patches = window.rpc_rcm_patches || {};
 					ns.revert(viewerMessageBodyElement);
 					ns.setState("viewerInverted", false);
 				}
+			}
+
+			// Try to prevent white flash.
+			// The "message-content" element was hidden to prevent the white flash, show it now.
+			const viewerContent = window.document.getElementById("message-content");
+			if (viewerContent) {
+				viewerContent.style.display = "inline";
 			}
 		}
 	} // setMode

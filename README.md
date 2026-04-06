@@ -19,13 +19,10 @@ Barbosa, which is released under Apache License version 2.0.
 The configurable option `use_scandinavian_inter_font` lets you choose whether to
 use the modified Inter font.
 
-
-|Value|Description|
-|-|-|
-|yes|Use the Scandinavian Inter font in both the mail viewer and the mail editor.|
-|viewer|Use the Scandinavian Inter font in the mail viewer.|
-|editor|Use the Scandinavian Inter font in the mail editor.|
-||Any other value will disable use of the Scandinavian Inter font.|
+|Value|Description||-|-||yes|Use the Scandinavian Inter font in both the mail
+viewer and the mail editor.| |viewer|Use the Scandinavian Inter font in the
+mail viewer.| |editor|Use the Scandinavian Inter font in the mail editor.| |
+|Any other value will disable use of the Scandinavian Inter font.|
 
 When used in the mail editor, the Inter font is added to the `available_fonts`
 option and set as default in the `default_font` option.
@@ -52,23 +49,32 @@ element, specifying whether **dark mode** is enabled or not:
 The configurable option `invert_implementation` lets you choose which **inverting**
 implementation to use.
 
+|Value|Description||-|-||classic|The initial implementation (see examples
+below).| |colour|An alternative implementation that retains more colours.|
 
-|Value|Description|
-|-|-|
-|classic|The initial implementation (see examples below).|
-|colour|An alternative implementation that retains more colours.|
-
-Known bugs
-
-Minor: Sometimes there is a white flash when a mail is selected, but I think
-that I have found all the relevant css that can cause this.
-
-I am inclined not to view this as a bug, because it looks like this is coming
-from white or bright background in the message itself, and the flash is caused
-by the delay between loading the message and the plugin inverting the message
-HTML elements.
+### Known bugs
 
 Minor: Not all the **css** and **js** is minified.
+
+### White flash
+
+Sometimes there is a white flash when a mail is selected. It looks like this is
+coming from white or bright background in the message itself, and the flash is
+caused by the delay between loading the message and the plugin inverting the
+message HTML elements.
+
+I have tried to fix this in two ways.
+
+**Message shown in the viewer**: The IFrame element which is the message viewer
+is hidden with \`display = "none"`, and then shown after the message inversion
+has been performed. This seems to work as intended.
+
+**Message shown in its own tab or window**: The element containing the message is
+hidden with \`display = "none"`, and then shown after the message inversion has
+been performed. This don't work 100%, because it is not possible (I have not
+fund a way) to hide the element from plug-in code any earlier then in the
+\`DOMContentLoaded` event listener. This fix is actually also done in the
+message viewer, just inside the IFrame.
 
 ## Mail editor (TinyMCE)
 
@@ -81,9 +87,9 @@ toggles between **dark** and **light** mode.
 ### Fix css
 
 The message editor **css** is fixed by creating a new **css** file containing the
-existing **css** from `skins/elastic/styles/embed.min.css` and some additional **
-css**. The RCM configuration setting `editor_css_location` is set with the path
-to the new combined **css** file, which causes RCM to use that file when it
+existing **css** from `skins/elastic/styles/embed.min.css` and some additional
+\** css**. The RCM configuration setting `editor_css_location` is set with the
+path to the new combined **css** file, which causes RCM to use that file when it
 initialises the mail editor (TinyMCE).
 
 ### Known bugs
@@ -99,17 +105,27 @@ chmod  u+w  plugins/rpc_rcm_patches/skin/elastic
 ```
 ## Examples
 
-### Message editor![Message editor in dark mode](images/dark-mode-example1.png)
+### Message editor
+![image](/home/rpc@rpc-scandinavia.dk/Development/Other/RpcRoundCubeMailPatches/images/dark-mode-example1.png)
 
-### Message viewer![Message viewer in dark mode](images/dark-mode-example5.png)![Message viewer in dark mode](images/dark-mode-example6.png)
 
-#### The same message in RoundCubeMail and Thunderbird![Message viewer in dark mode](images/dark-mode-example7-in-rcm.png)![Thunderbird in dark mode](images/dark-mode-example7-in-thunderbird.png)
+### Message viewer
+![image](/home/rpc@rpc-scandinavia.dk/Development/Other/RpcRoundCubeMailPatches/images/dark-mode-example5.png)
+
+![image](/home/rpc@rpc-scandinavia.dk/Development/Other/RpcRoundCubeMailPatches/images/dark-mode-example6.png)
+
+
+#### The same message in RoundCubeMail and Thunderbird
+![image](/home/rpc@rpc-scandinavia.dk/Development/Other/RpcRoundCubeMailPatches/images/dark-mode-example7-in-rcm.png)
+
+![image](/home/rpc@rpc-scandinavia.dk/Development/Other/RpcRoundCubeMailPatches/images/dark-mode-example7-in-thunderbird.png)
+
 
 ## Installation
 
 Basic steps to install this plugin:
 
-* Download code from GitHub (
+* Download code from GitHub ( 
   <https://github.com/rpc-scandinavia/RpcRoundCubeMailPatches>)
 * Extract files, and copy directory `rpc_rcm_patches` to `plugins`
 * Enable plugin in `config/config.inc.php` by adding `rpc_rcm_patches` to `
@@ -123,10 +139,8 @@ Basic steps to install this plugin:
 
 Changes made.
 
-
-|Version|Description|
-|-|-|
-|2026.0|Added a button in the message toolbar, that can toggle between dark  and light mode, when the application is in dark mode.|
+|Version|Description||-|-||2026.0|Added a button in the message toolbar, that
+can toggle between dark  and light mode, when the application is in dark mode.|
 |2025.0|Initial version.|
 
 René Paw Christensen
