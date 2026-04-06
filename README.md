@@ -72,8 +72,8 @@ been performed. This seems to work as intended.
 **Message shown in its own tab or window**: The element containing the message is
 hidden with `display = 'none'`, and then shown after the message inversion has
 been performed. This don't work 100%, because it is not possible (I have not
-fund a way) to hide the element from plug-in code any earlier then in the **
-DOMContentLoaded **event listener. This fix is actually also done in the message
+fund a way) to hide the element from plug-in code any earlier then in the 
+**DOMContentLoaded** event listener. This fix is actually also done in the message
 viewer, just inside the IFrame.
 
 ## Mail editor (TinyMCE)
