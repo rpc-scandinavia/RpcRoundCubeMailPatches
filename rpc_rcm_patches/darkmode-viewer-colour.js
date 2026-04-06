@@ -88,7 +88,7 @@ window.rpc_rcm_patches = window.rpc_rcm_patches || {};
 
 		// Try parsing the raw colour string.
 		let result = null;
-		rawColorStr = rawColorStr.trim();
+		rawColorStr = rawColorStr.toString().trim();
 
 		if (rawColorStr.startsWith('#') == true) {
 			result = parseHex(rawColorStr);
@@ -105,7 +105,7 @@ window.rpc_rcm_patches = window.rpc_rcm_patches || {};
 
 		// Try parsing computed colour string as fallback.
 		if (computedColorStr) {
-			computedColorStr = computedColorStr.trim();
+			computedColorStr = computedColorStr.toString().trim();
 			if (computedColorStr.startsWith('#') == true) {
 				result = parseHex(computedColorStr);
 			} else if (computedColorStr.startsWith('rgb') == true) {
@@ -269,7 +269,7 @@ window.rpc_rcm_patches = window.rpc_rcm_patches || {};
 	function styleMapToString(styleMap) {
 		const validStyles = Object.entries(styleMap)
 			.filter(([key, val]) => /^[a-z-]+$/i.test(key) && val != null)
-			.map(([key, val]) => `${key}: ${val.trim()}`);
+			.map(([key, val]) => `${key}: ${val.toString().trim()}`);
 		return (validStyles.length > 0) ? validStyles.join('; ') : '';
 	} // styleMapToString
 
@@ -311,11 +311,11 @@ window.rpc_rcm_patches = window.rpc_rcm_patches || {};
 	// * Choose the visible text colour between 'originalTextColorRgba' and 'computedTextColorRgba'.
 	// * Inverted text colours must have a good contrast in relation to the specified 'originalBackColorRgba'.
 	// * Inverted text colours must retain their colours, and not just gray-scaled.
-	// Rgba originalTextColorRgbs: The original text colour.
+	// Rgba originalTextColorRgba: The original text colour.
 	// Rgba computedTextColorRgba: The computed text colour.
 	// Rgba invertedBackColorRgba: The inverted background colour (inverted result from 'invertBackColor').
 	// Rgba return: The inverted background colour.
-	function invertTextColor(originalTextColorRgbs, computedTextColorRgba, invertedBackColorRgba) {
+	function invertTextColor(originalTextColorRgba, computedTextColorRgba, invertedBackColorRgba) {
 		function getLuminance({ r, g, b }) {
 			const a = [r, g, b].map(v => {
 				v /= 255;
@@ -325,27 +325,39 @@ window.rpc_rcm_patches = window.rpc_rcm_patches || {};
 		} // getLuminance
 
 		function ensureContrast(bgRgba, fgRgba) {
-			const safeFgRgba = { ...fgRgba, a: fgRgba.a === 0 ? 1 : fgRgba.a };
+			const safeFg = { ...fgRgba, a: fgRgba.a === 0 ? 1 : fgRgba.a };
 			const lumBg = getLuminance(bgRgba);
-			const lumFg = getLuminance(safeFgRgba);
-			const contrast = (Math.max(lumBg, lumFg) + 0.05) / (Math.min(lumBg, lumFg) + 0.05);
+			const lumFg = getLuminance(safeFg);
+			let contrast = (Math.max(lumBg, lumFg) + 0.05) / (Math.min(lumBg, lumFg) + 0.05);
 			if (contrast >= 4.5) {
-				return safeFgRgba;
+				return safeFg;				// Already good — but we'll still lighten further for very dark backgrounds.
 			}
 
-			const fgHsla = rgbToHsl(safeFgRgba);
-			if (lumBg < 0.3) {
-				fgHsla.l = Math.min(85, Math.max(70, fgHsla.l + 35));				// Light text for dark backgrounds.
-				fgHsla.s = fgHsla.s === 0 ? 0 : Math.min(100, fgHsla.s + 30);		// Vibrant text.
+			let hsla = rgbToHsl(safeFg);
+			if (lumBg < 0.2) {								// Very dark background (e.g. black).
+				// Force high lightness while keeping hue + reasonable saturation.
+				hsla.l = Math.max(hsla.l, 88);				// Minimum 88% lightness.
+				if (hsla.s < 30) hsla.s = 40;				// Avoid too dull colours on black.
+				hsla.s = Math.min(100, hsla.s * 1.15);		// Slight saturation boost.
+			} else if (lumBg < 0.5) {						// medium-dark background.
+				hsla.l = Math.max(75, hsla.l + 30);
+				hsla.s = Math.min(100, hsla.s + 20);
 			} else {
-				fgHsla.l = Math.max(20, fgHsla.l - 40);								// Dark text for mid-tone backgrounds.
-				fgHsla.s = fgHsla.s === 0 ? 0 : Math.min(100, fgHsla.s + 30);		// Vibrant text.
+				// lighter background → darken text
+				hsla.l = Math.max(12, hsla.l - 45);
+				hsla.s = Math.min(100, hsla.s + 20);
 			}
-			const result = hslToRgb(fgHsla);
-			return { ...result, a: safeFgRgba.a };
+
+			// Avoid washed-out results.
+			hsla.l = Math.min(98, hsla.l);
+
+			const newRgb = hslToRgb(hsla);
+			return { ...newRgb, a: safeFg.a };
 		} // ensureContrast
 
-		const effectiveTextColor = ((computedTextColorRgba) && (computedTextColorRgba.a > 0)) ? computedTextColorRgba : { ...originalTextColorRgbs, a: originalTextColorRgbs.a === 0 ? 1 : originalTextColorRgbs.a };
+		const effectiveTextColor = (computedTextColorRgba && computedTextColorRgba.a > 0)
+			? computedTextColorRgba
+			: { ...originalTextColorRgba, a: originalTextColorRgba.a === 0 ? 1 : originalTextColorRgba.a };
 		return ensureContrast(invertedBackColorRgba, effectiveTextColor);
 	} // invertTextColor
 
@@ -402,84 +414,122 @@ window.rpc_rcm_patches = window.rpc_rcm_patches || {};
 
 		// Skip inversion for tables if handleTables is false.
 		const elementHasExplicitBackground = ((styleMap['background']) || (styleMap['background-color']) || (element.style.backgroundColor) || (originalBackColorTable));
-		const elementIsTable = (element.tagName.toLowerCase() === 'table');
-		if ((options.handleTables == false) && (elementIsTable == true)) {
-			// Ensure that the colours is correct inside the table.
-			const newBackground = computedStyle.backgroundColor;
-			const newText = computedStyle.color;
+		switch (element.tagName.toLowerCase()) {
+			case 'style':
+				//------------------------------------------------------------------------------------------------------
+				// Style.
+				//------------------------------------------------------------------------------------------------------
+				element.setAttribute('data-orig-style', element.textContent);
+				element.textContent = '';
+				break;
 
-			// Apply colours.
-			if (elementHasExplicitBackground) {
-				if (styleMapBackColor) {
-					styleMap[styleMapBackColor] = newBackground;
+			case 'table':
+				//------------------------------------------------------------------------------------------------------
+				// Table.
+				//------------------------------------------------------------------------------------------------------
+				if (options.handleTables === true) {
+					// Parse colours.
+					const originalBackColorChoosen = (originalBackColorTable) ? originalBackColorTable : originalBackColor;
+					const originalTextColorRgba = parseColorToRgba(originalTextColor, computedStyle.color);
+					const computedBackColorRgba = parseColorToRgba(computedStyle.backgroundColor);
+					const computedTextColorRgba = parseColorToRgba(computedStyle.color);
+
+					// Compute new background colour.
+					let invertedBackColorRgba = invertBackColor(
+						parseColorToRgba(originalBackColorChoosen, computedStyle.backgroundColor),
+						computedBackColorRgba,
+						defaultDarkBackColorRgba,
+						options.lightnessThreshold
+					);
+
+					// Increase the darkest background for tables if specified.
+					if ((options.tableBrightnessBoost > 0) && (element.closest('table table') == false)) {
+						// Increase lightness by options.tableBrightnessBoost %.
+						const boostedHsla = rgbToHsl(invertedBackColorRgba);
+						boostedHsla.l = Math.min(100, boostedHsla.l + options.tableBrightnessBoost);
+						invertedBackColorRgba = hslToRgb(boostedHsla);
+					}
+
+					// Compute new text colour using final background.
+					const invertedTextColorRgba = invertTextColor(
+						originalTextColorRgba,
+						computedTextColorRgba,
+						invertedBackColorRgba
+					);
+
+					// Apply colours.
+					if ((originalBackColorTable) && (elementIsTable == true)) {
+						// Use the better supported 'background-color'.
+						element.removeAttribute('bgcolor');
+						styleMapBackColor = 'background-color';
+					}
+					if (styleMapBackColor) {
+						styleMap[styleMapBackColor] = formatRgba(invertedBackColorRgba);
+					} else {
+						element.style.backgroundColor = formatRgba(invertedBackColorRgba);
+					}
+					if (styleMapTextColor) {
+						styleMap[styleMapTextColor] = formatRgba(invertedTextColorRgba);
+					} else {
+						element.style.color = formatRgba(invertedTextColorRgba);
+					}
+
+					// Update style attribute.
+					element.setAttribute('style', styleMapToString(styleMap) || '');
+
+					// Invert child elements.
+					element.childNodes.forEach((child) => {
+						if (child instanceof HTMLElement) {
+							invertElement(child, defaultDarkBackColorRgba, { ...options, tableBrightnessBoost: options.tableBrightnessBoost });
+						}
+					});
+				}
+				break;
+
+			default:
+				//------------------------------------------------------------------------------------------------------
+				// Default.
+				//------------------------------------------------------------------------------------------------------
+				// Ensure that the colours is correct inside a table.
+				// Compute new background colour.
+				const newBackground = invertBackColor(
+					parseColorToRgba(computedStyle.backgroundColor),
+					parseColorToRgba(computedStyle.backgroundColor),
+					defaultDarkBackColorRgba,
+					options.lightnessThreshold
+				);
+
+				// Compute new text colour using final background.
+				const newText = invertTextColor(
+					parseColorToRgba(originalTextColor, computedStyle.color),
+					parseColorToRgba(computedStyle.color),
+					parseColorToRgba(newBackground)
+				);
+
+				// Apply colours.
+				if (elementHasExplicitBackground) {
+					if (styleMapBackColor) {
+						styleMap[styleMapBackColor] = formatRgba(newBackground);
+					} else {
+						element.style.backgroundColor = formatRgba(newBackground);
+					}
+				}
+				if (styleMapTextColor) {
+					styleMap[styleMapTextColor] = formatRgba(newText);
 				} else {
-					element.style.backgroundColor = newBackground;
+					element.style.color = formatRgba(newText);
 				}
-			}
-			if (styleMapTextColor) {
-				styleMap[styleMapTextColor] = newText;
-			} else {
-				element.style.color = newText;
-			}
 
-			// Update style attribute.
-			element.setAttribute('style', styleMapToString(styleMap) || '');
-		} else {
-			// Parse colours.
-			const originalBackColorChoosen = (originalBackColorTable) ? originalBackColorTable : originalBackColor;
-			const originalTextColorRgba = parseColorToRgba(originalTextColor, computedStyle.color);
-			const computedBackColorRgba = parseColorToRgba(computedStyle.backgroundColor);
-			const computedTextColorRgba = parseColorToRgba(computedStyle.color);
+				// Update style attribute.
+				element.setAttribute('style', styleMapToString(styleMap) || '');
 
-			// Compute new background colour.
-			let invertedBackColorRgba = invertBackColor(
-				parseColorToRgba(originalBackColorChoosen, computedStyle.backgroundColor),
-				computedBackColorRgba,
-				defaultDarkBackColorRgba,
-				options.lightnessThreshold
-			);
-
-			// Increase the darkest background for tables if specified.
-			if ((elementIsTable == true) && (options.tableBrightnessBoost > 0) && (!element.closest('table table'))) {
-				// Increase lightness by options.tableBrightnessBoost %.
-				const boostedHsla = rgbToHsl(invertedBackColorRgba);
-				boostedHsla.l = Math.min(100, boostedHsla.l + options.tableBrightnessBoost);
-				invertedBackColorRgba = hslToRgb(boostedHsla);
-			}
-
-			// Compute new text colour using final background.
-			const invertedTextColorRgba = invertTextColor(
-				originalTextColorRgba,
-				computedTextColorRgba,
-				invertedBackColorRgba
-			);
-
-			// Apply colours.
-			if ((originalBackColorTable) && (elementIsTable == true)) {
-				// Use the better supported 'background-color'.
-				element.removeAttribute('bgcolor');
-				styleMapBackColor = 'background-color';
-			}
-			if (styleMapBackColor) {
-				styleMap[styleMapBackColor] = formatRgba(invertedBackColorRgba);
-			} else {
-				element.style.backgroundColor = formatRgba(invertedBackColorRgba);
-			}
-			if (styleMapTextColor) {
-				styleMap[styleMapTextColor] = formatRgba(invertedTextColorRgba);
-			} else {
-				element.style.color = formatRgba(invertedTextColorRgba);
-			}
-
-			// Update style attribute.
-			element.setAttribute('style', styleMapToString(styleMap) || '');
-
-			// Invert child elements.
-			element.childNodes.forEach(child => {
-				if (child instanceof HTMLElement) {
-					ns.invert(child, defaultDarkBackColorRgba, { ...options, tableBrightnessBoost: elementIsTable ? 0 : options.tableBrightnessBoost });
-				}
-			});
+				// Invert child elements.
+				element.childNodes.forEach((child) => {
+					if (child instanceof HTMLElement) {
+						invertElement(child, defaultDarkBackColorRgba, { ...options, tableBrightnessBoost: 0 });
+					}
+				});
+				break;
 		}
 	} // invertElement
 
@@ -506,6 +556,7 @@ window.rpc_rcm_patches = window.rpc_rcm_patches || {};
 		const origStyle = element.getAttribute('data-orig-style');
 
 		const elementIsTable = (element.tagName.toLowerCase() === 'table');
+		const elementIsStyle = (element.tagName.toLowerCase() === 'style');
 		if ((origBackColorTable != null) && (elementIsTable == true)) {
 			element.setAttribute('bgcolor', origBackColorTable)
 			element.removeAttribute('data-orig-bg-tbl');
@@ -522,8 +573,16 @@ window.rpc_rcm_patches = window.rpc_rcm_patches || {};
 		}
 
 		if (origStyle != null) {
-			element.setAttribute('style', origStyle)
-			element.removeAttribute('data-orig-style');
+			if (elementIsStyle === false) {
+				element.setAttribute('style', origStyle)
+				element.removeAttribute('data-orig-style');
+			} else {
+				// Style element.
+				if (origStyle !== "") {
+					element.textContent = origStyle;
+					element.removeAttribute('data-orig-style');
+				}
+			}
 		}
 
 		// Revert child elements.
