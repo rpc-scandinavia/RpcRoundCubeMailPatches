@@ -19,10 +19,12 @@ Barbosa, which is released under Apache License version 2.0.
 The configurable option `use_scandinavian_inter_font` lets you choose whether to
 use the modified Inter font.
 
-|Value|Description||-|-||yes|Use the Scandinavian Inter font in both the mail
-viewer and the mail editor.| |viewer|Use the Scandinavian Inter font in the
-mail viewer.| |editor|Use the Scandinavian Inter font in the mail editor.| |
-|Any other value will disable use of the Scandinavian Inter font.|
+|Value|Description|
+|-|-|
+|yes|Use the Scandinavian Inter font in both the mail viewer and the mail editor.|
+|viewer|Use the Scandinavian Inter font in the mail viewer.|
+|editor|Use the Scandinavian Inter font in the mail editor.| 
+| |Any other value will disable use of the Scandinavian Inter font.|
 
 When used in the mail editor, the Inter font is added to the `available_fonts`
 option and set as default in the `default_font` option.
@@ -49,8 +51,10 @@ element, specifying whether **dark mode** is enabled or not:
 The configurable option `invert_implementation` lets you choose which **inverting**
 implementation to use.
 
-|Value|Description||-|-||classic|The initial implementation (see examples
-below).| |colour|An alternative implementation that retains more colours.|
+|Value|Description|
+|-|-|
+|classic|The initial implementation (see examples below).|
+|colour|An alternative implementation that retains more colours.|
 
 ### Known bugs
 
@@ -92,7 +96,7 @@ toggles between **dark** and **light** mode.
 
 The message editor **css** is fixed by creating a new **css** file containing the
 existing **css** from `skins/elastic/styles/embed.min.css` and some additional
-\** css**. The RCM configuration setting `editor_css_location` is set with the
+** css**. The RCM configuration setting `editor_css_location` is set with the
 path to the new combined **css** file, which causes RCM to use that file when it
 initialises the mail editor (TinyMCE).
 
