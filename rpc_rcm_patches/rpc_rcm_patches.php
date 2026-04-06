@@ -14,6 +14,10 @@
 // │          under Apache License version 2.0.                                                                         │
 // │          https://github.com/modscleo4/roundcube-plugin-dark-html                                                   │
 // │                                                                                                                    │
+// │          Online API documentation:                                                                                 │
+// │          https://github.com/roundcube/roundcubemail/wiki/Plugin-API                                                │
+// │          https://github.com/roundcube/roundcubemail/wiki/Javascript-API                                            │
+// │                                                                                                                    │
 // │          RPC: https://rpc-scandinavia.dk/                                                                          │
 // │                                                                                                                    │
 // └────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┘
@@ -57,6 +61,14 @@ class rpc_rcm_patches extends rcube_plugin {
 	// Message viewer.
 	//------------------------------------------------------------------------------------------------------------------
 	function init_viewer() {
+		// This project was originally extending an existing project, but I have realised that it might be possible
+		// to do all the message inverting in PHP instead of Javascript, by observing the API documentation.
+		//		$this->add_hook('message_part_after', array($this, 'invert'));
+		// and the function:
+		//		function replace($args) {
+		//			if ($args['type'] == 'html') { ..... return modyfied $args['body'] } else { return null; }
+		//		}
+
 		// Enable dark mode for the message viewer.
 		// Each implementation must contain the following functions in the "window.rpc_rcm_patches" namespace:
 		//	invert(element)

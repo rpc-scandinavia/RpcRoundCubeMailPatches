@@ -458,7 +458,7 @@ window.rpc_rcm_patches = window.rpc_rcm_patches || {};
 					);
 
 					// Apply colours.
-					if ((originalBackColorTable) && (elementIsTable == true)) {
+					if (originalBackColorTable) {
 						// Use the better supported 'background-color'.
 						element.removeAttribute('bgcolor');
 						styleMapBackColor = 'background-color';

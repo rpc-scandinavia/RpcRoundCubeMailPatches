@@ -2,7 +2,7 @@
 window.rpc_rcm_patches = window.rpc_rcm_patches || {};
 
 (function(ns) {
-	ns.LOG_TO_CONSOLE = false;
+	ns.LOG_TO_CONSOLE = true;
 	ns.TASK_MAIL = "task-mail";
 	ns.ACTION_NONE = "action-none";
 	ns.ACTION_SHOW = "action-show";
@@ -132,6 +132,12 @@ window.rpc_rcm_patches = window.rpc_rcm_patches || {};
 					ns.revert(viewerMessageBodyElement);
 					ns.setState("viewerInverted", false);
 				}
+			}
+
+			// Try to prevent white flash.
+			// The IFrame was hidden to prevent the white flash, show it now.
+			if (window.document.body.parentElement) {
+				window.document.body.parentElement.style.display = "inline";
 			}
 		}
 
@@ -300,6 +306,43 @@ if (window.rcmail) {
 		}
 
 		//--------------------------------------------------------------------------------------------------------------
+		// Initialise the message viewer with the current application state.
+		//--------------------------------------------------------------------------------------------------------------
+		if ((appAction === ns.ACTION_PREVIEW) || (appAction === ns.ACTION_SHOW)) {
+			ns.setMode(appAction);
+			ns.setButtons(appAction);
+		}
+
+		// The message is shown in the IFrame, but the buttons are in the application.
+		if (appAction === ns.ACTION_NONE) {
+			ns.setButtons(appAction);
+		}
+
+		//--------------------------------------------------------------------------------------------------------------
+		// Try to prevent white flash.
+		// This is a little hack, it hides the IFrame until the message inversion has been performed.
+		// This obviously only works for messages shown in the viewer and not in a window.
+		// The IFrame element is "automatically" shown somewhere else in RCM code, but is also restored in "ns.setMode".
+		//--------------------------------------------------------------------------------------------------------------
+		if (appAction === ns.ACTION_NONE) {
+			if (window.rcmail.message_list) {
+				window.rcmail.message_list.addEventListener('select', function (list) {
+					let selectCount = list.get_selection(false).length;
+
+					// Log.
+					if (ns.LOG_TO_CONSOLE === true) {
+						console.debug(`${appAction} - EVENT: Message list selection changed. ${selectCount} selected.`);
+					}
+
+					let appIsDark = window.document.documentElement.classList.contains("dark-mode");
+					if ((appIsDark === true) && (selectCount === 1)) {
+						viewerIframe.style.display = "none";
+					}
+				});
+			}
+		}
+
+		//--------------------------------------------------------------------------------------------------------------
 		// Observe when the "dark-mode" class is added or removed from the HTML element, and update the mode and buttons.
 		//--------------------------------------------------------------------------------------------------------------
 		if ((appAction === ns.ACTION_NONE) || (appAction === ns.ACTION_PREVIEW)) {
@@ -362,7 +405,7 @@ if (window.rcmail) {
 		// Observe when the message viewer IFrame is loaded, and update the mode and buttons.
 		//--------------------------------------------------------------------------------------------------------------
 		if ((appAction === ns.ACTION_NONE) && (viewerIframe !== null)) {
-			viewerIframe.addEventListener("load", function() {
+			viewerIframe.addEventListener("load", function(event) {
 				// Log.
 				if (ns.LOG_TO_CONSOLE === true) {
 					console.debug(`${appAction} - EVENT: IFrame was loaded`);
@@ -370,19 +413,6 @@ if (window.rcmail) {
 
 				ns.setButtons(appAction);
 			});
-		}
-
-		//--------------------------------------------------------------------------------------------------------------
-		// Initialise the message viewer with the current application state.
-		//--------------------------------------------------------------------------------------------------------------
-		if ((appAction === ns.ACTION_PREVIEW) || (appAction === ns.ACTION_SHOW)) {
-			ns.setMode(appAction);
-			ns.setButtons(appAction);
-		}
-
-		// The message is shown in the IFrame, but the buttons are in the application.
-		if (appAction === ns.ACTION_NONE) {
-			ns.setButtons(appAction);
 		}
 
 	}); // "init" event listener
