@@ -177,7 +177,7 @@ class rpc_rcm_patches extends rcube_plugin {
 		if ($this->rcmail->config->get(self::CONFIG_STRIP_INLINE_BACKGROUNDS_FORCE, false) == true) {
 			$this->delete_user_preference(self::CONFIG_STRIP_INLINE_BACKGROUNDS);
 		}
-		if ($this->rcmail->config->get(self::CONFIG_CONFIG_VIEWER_BUTTON_ENABLED_FORCE, false) == true) {
+		if ($this->rcmail->config->get(self::CONFIG_VIEWER_BUTTON_ENABLED_FORCE, false) == true) {
 			$this->delete_user_preference(self::CONFIG_VIEWER_BUTTON_ENABLED);
 		}
 		if ($this->rcmail->config->get(self::CONFIG_USE_SCANDINAVIAN_INTER_FONT_FORCE, false) == true) {

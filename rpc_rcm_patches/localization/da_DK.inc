@@ -11,7 +11,7 @@ $labels['strip_inline_backgrounds']  = 'Fjern diverse baggrunde';
 $labels['use_scandinavian_inter_font']  = 'Brug Skandinaviak Inter skrifttype';
 $labels['use_scandinavian_inter_font_yes']  = 'aktiver i post læser og post skriver';
 $labels['use_scandinavian_inter_font_viewer']  = 'aktiver i post læser';
-$labels['use_scandinavian_inter_font_
+$labels['use_scandinavian_inter_font_editor']  = 'aktiver i post skriver';
 
 $labels['viewer_button_enabled']  = 'Vis modus knap i post læseren';
 $labels['viewer_button_dark_text']  = 'Mørk modus';
