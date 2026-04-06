@@ -66,7 +66,7 @@ message HTML elements.
 I have tried to fix this in two ways.
 
 **Message shown in the viewer**: The IFrame element which is the message viewer
-is hidden with \`display = "none"`, and then shown after the message inversion
+is hidden with `display = "none"`, and then shown after the message inversion
 has been performed. This seems to work as intended.
 
 **Message shown in its own tab or window**: The element containing the message is
